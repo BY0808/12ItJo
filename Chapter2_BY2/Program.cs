@@ -326,6 +326,44 @@ namespace Chapter2_BY2
             Console.WriteLine("\n1. 공격\n");
 
             int keyInput = ConsoleUtility.PromptMenuChoice(1);
+            FightMenu();
+        }
+
+        private void FightMenu() // 전투 선택 화면
+        {
+            Console.Clear();
+
+            ConsoleUtility.ShowTitle("■ 던 전 ■");
+            Console.WriteLine();
+
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                string isDeadStr = monsters.ToArray()[i].IsDead ? "사망" : "";
+                Console.Write(ConsoleUtility.PadRightForMixedText($"{i + 1}- Lv {monsters.ToArray()[i].Level} {monsters.ToArray()[i].Name} |  HP {monsters.ToArray()[i].Hp} ", 24));
+                Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {monsters.ToArray()[i].Atk}", 11));
+                Console.WriteLine($"| {isDeadStr}");
+            }
+            ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
+
+            string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}.";
+            Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택");
+            Console.WriteLine("0. 취소");
+
+            int keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
+            while (true)
+            {
+                if (keyInput == 0)
+                {
+                    DungeonMenu();
+                }
+                else if (monsters.ToArray()[keyInput - 1].IsDead)
+                {
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
+                    keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
+                }
+            }
         }
     }
 
