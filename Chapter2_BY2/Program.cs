@@ -5,31 +5,31 @@ namespace Chapter2_BY2
 {
     public class GameManager
     {
-        private Player player;
-        private List<Item> inventory;
+        private Player player; // 플레이어 객체
+        private List<Item> inventory; // 인벤토리 리스트
 
-        private List<Item> storeInventory;
+        private List<Item> storeInventory; // 상점 품목 리스트
 
-        List<Monster> monsters = new List<Monster>();
+        List<Monster> monsters = new List<Monster>(); // 몬스터를 저장할 리스트
 
-        int bonusAtk, bonusDef, bonusHp;
+        int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
 
-        private delegate void GameEvent(ICharacter character);
-        private event GameEvent deathEvent;
+        private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
+        private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
 
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
         }
 
-        private void InitializeGame()
+        private void InitializeGame() // 게임 시작 준비
         {
             //기본적인 초기화!
-            player = new Player("BoB", "Huge", 1, 10, 5, 100, 2000);
+            player = new Player("BoB", "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
 
-            inventory = new List<Item>();
+            inventory = new List<Item>(); // 인벤토리 객체 생성
 
-            storeInventory = new List<Item>();
+            storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
             storeInventory.Add(new Item("수련자 갑옷", "적당한 갑옷", ItemType.ARMOR, 0, 5, 0, 1000));
             storeInventory.Add(new Item("무쇠갑옷", "조금좋은 갑옷", ItemType.ARMOR, 0, 9, 0, 1500));
             storeInventory.Add(new Item("스파르타 갑옷", "좋은 갑옷", ItemType.ARMOR, 0, 15, 0, 3500));
@@ -37,11 +37,11 @@ namespace Chapter2_BY2
             storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
             storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
 
-            deathEvent += RewardMenu;
+            deathEvent += RewardMenu; // 이벤트 메서드에 해당 메서드 추가
         }
 
         //Program 이라는 다른 클래스 접근!
-        public void StartGame()
+        public void StartGame() // 게임 시작
         {
             //콘솔 게임은 콘솔 지워주는걸 지속해야함..!
             Console.Clear();
@@ -50,10 +50,10 @@ namespace Chapter2_BY2
             MainMenu();
         }
 
-        private void MainMenu()
+        private void MainMenu() // 메인 메뉴
         {
             //구성
-            //0. 화면 정리
+            //0. 메뉴 정리
             Console.Clear();
 
             //1. 선택 멘트 줌
@@ -94,7 +94,7 @@ namespace Chapter2_BY2
             MainMenu();
         }
 
-        private void StatusMenu()
+        private void StatusMenu() // 상태창 메뉴
         {
             Console.Clear();
             //메뉴의 타이틀 만들기
@@ -117,25 +117,16 @@ namespace Chapter2_BY2
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + bonusDef).ToString(), bonusDef > 0 ? $" (+{bonusDef})" : "");
             ConsoleUtility.PrintTextHighlights("체  력 : ", (player.Hp + bonusHp).ToString(), bonusHp > 0 ? $" (+{bonusHp})" : "");
 
-            /*
-            ConsoleUtility.PrintTextHighlights("공격력 : ", player.Attack.ToString());
-            ConsoleUtility.PrintTextHighlights("방어력 : ", player.Def.ToString());
-            ConsoleUtility.PrintTextHighlights("체  력 : ", player.Hp.ToString());
-            */
             ConsoleUtility.PrintTextHighlights(" Gold  : ", player.Gold.ToString());
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
-            switch (ConsoleUtility.PromptMenuChoice(0))
-            {
-                case 0:
-                    MainMenu();
-                    break;
-            }
+            ConsoleUtility.PromptMenuChoice(0);
+            MainMenu();
         }
 
-        private void InventoryMenu()
+        private void InventoryMenu() // 인벤토리 메뉴
         {
             Console.Clear();
 
@@ -154,7 +145,7 @@ namespace Chapter2_BY2
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 1))
+            switch (ConsoleUtility.PromptMenuChoice(0, 1)) // 메뉴 선택
             {
                 case 0:
                     MainMenu();
@@ -165,7 +156,7 @@ namespace Chapter2_BY2
             }
         }
 
-        private void EquipMenu()
+        private void EquipMenu() // 장착 메뉴
         {
             Console.Clear();
 
@@ -194,9 +185,9 @@ namespace Chapter2_BY2
                     EquipMenu();
                     break;
             }
-        }
+        } 
 
-        private void StoreMenu()
+        private void StoreMenu() // 상점 메뉴
         {
             Console.Clear();
 
@@ -224,17 +215,17 @@ namespace Chapter2_BY2
                     PurchaseMenu();
                     break;
             }
-        }
+        } 
 
-        private void PurchaseMenu(string? prompt = null)
+        private void PurchaseMenu(string? prompt = null) // 상점 구매 메뉴
         {
             //경고 메세지 띄우기
-            if (prompt != null)
+            if (prompt != null) // 메시지가 있으면?
             {
                 //1초간 메세지를 띄운 다음에 다시 진행
                 Console.Clear();
-                ConsoleUtility.ShowTitle(prompt);
-                Thread.Sleep(1000); //몇 밀리 세컨드 동안 멈출 것인지
+                ConsoleUtility.ShowTitle(prompt); // 메시지 표시
+                Thread.Sleep(1000); //몇 밀리 세컨드 동안 멈출 것인지 1000 밀리초 = 1초
             }
 
             Console.Clear();
@@ -284,24 +275,24 @@ namespace Chapter2_BY2
             }
         }
 
-        private void DungeonMenu() // 던전 화면
+        private void DungeonMenu() // 던전 메뉴
         {
             Console.Clear();
 
             ConsoleUtility.ShowTitle("■ 던 전 ■");
             Console.WriteLine();
             player.Hp = 100;
-            if (monsters.Count <= 0)
+            if (monsters.Count <= 0) // 현재 몬스터 수가 0이하 인가?
             {
-                int monsterCount = new Random().Next(1, 5);
+                int monsterCount = new Random().Next(1, 5); // 1 ~ 4 마리의 몬스터 소환
                 for (int i = 0; i < monsterCount; i++)
                 {
-                    MonsterType monsterType = (MonsterType)(new Random().Next(1, 4));
-                    switch (monsterType)
+                    MonsterType monsterType = (MonsterType)(new Random().Next(1, 4)); // 몬스터 타입을 미니언, 고블린, 드래곤 사이에서 랜덤하게 선택
+                    switch (monsterType) // 해당 몬스터 타입에 맞게
                     {
                         case MonsterType.Minion:
-                            Minion minion = new Minion();
-                            monsters.Add(minion);
+                            Minion minion = new Minion(); // 몬스터 생성
+                            monsters.Add(minion); // 몬스터 리스트에 추가
                             break;
                         case MonsterType.Goblin:
                             Goblin goblin = new Goblin();
@@ -314,7 +305,7 @@ namespace Chapter2_BY2
                     }
                 }
             }
-            foreach (Monster mon in monsters)
+            foreach (Monster mon in monsters) // 모든 몬스터 리스트 스캔하여 하나씩 표시
             {
                 string isDeadStr = mon.IsDead ? "사망" : "";
                 Console.Write(ConsoleUtility.PadRightForMixedText($"Lv {mon.Level} {mon.Name} |  HP {mon.Hp} ", 21));
@@ -327,20 +318,20 @@ namespace Chapter2_BY2
 
             Console.WriteLine("\n1. 공격\n");
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(1);
+            ConsoleUtility.PromptMenuChoice(1);
             FightMenu();
         }
 
-        private void FightMenu() // 전투 선택 화면
+        private void FightMenu() // 전투 선택 메뉴
         {
             Console.Clear();
 
             ConsoleUtility.ShowTitle("■ 던 전 ■");
             Console.WriteLine();
 
-            for (int i = 0; i < monsters.Count; i++)
+            for (int i = 0; i < monsters.Count; i++) // 몬스터 리스트의 수 만큼 표시
             {
-                string isDeadStr = monsters.ToArray()[i].IsDead ? "사망" : "";
+                string isDeadStr = monsters.ToArray()[i].IsDead ? "사망" : ""; // 해당 몬스터가 죽어있는 경우 "사망" 표시. 아닌 경우 공백.
                 Console.Write(ConsoleUtility.PadRightForMixedText($"{i + 1}- Lv {monsters.ToArray()[i].Level} {monsters.ToArray()[i].Name} |  HP {monsters.ToArray()[i].Hp} ", 24));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {monsters.ToArray()[i].Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
@@ -349,56 +340,54 @@ namespace Chapter2_BY2
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
-            string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}.";
-            Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택");
+            string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}."; // 몬스터 수에 맞는 선택 영역 문자열 할당
+            Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택"); // 해당 문자열 표시
             Console.WriteLine("0. 취소");
 
             int keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
-            while (true)
+            while (true) // 유효하는 값이 입력될 때 까지 계속 반복
             {
-                if (keyInput == 0)
+                if (keyInput == 0) // 0번 선택
                 {
                     DungeonMenu();
                 }
-                else if (monsters.ToArray()[keyInput - 1].IsDead)
+                else if (monsters.ToArray()[keyInput - 1].IsDead) // 선택한 몬스터가 죽었는가? (잘못된 선택)
                 {
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
-                    keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
+                    keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count); // 재입력 후 반복. while이 없는 경우 정상적인 입력으로 판단함.
                 }
-                else BattleMenu(monsters.ToArray()[keyInput - 1]);
+                else BattleMenu(monsters.ToArray()[keyInput - 1]); // 전투 메뉴 진입
             }
         }
-        private void BattleMenu(ICharacter character) //전투 화면
+        private void BattleMenu(ICharacter character) //전투 메뉴
         {
-            int keyInput;
-
             ConsoleUtility.ShowTitle("■ Battle!! ■");
             int currentDamage;
-            if (character is Monster) // 입력값이 Monster인 경우 (몬스터를 공격한다.)
+            if (character is Monster) // 입력값이 Monster인 경우 (플레이어 차례)
             {
                 int deadCount = 0; // 죽은 몬스터 수
                 Console.Clear();
 
                 ICharacter opposite = player; // 상대방 : 플레이어
-                currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f));
+                currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
                 Console.WriteLine($"{opposite.Name}의 공격!");
                 Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                 Console.WriteLine();
                 Console.WriteLine($"Lv {character.Level} {character.Name}");
-                Console.Write($"HP {character.Hp}");
-                character.TakeDamage(currentDamage);
-                Console.WriteLine($" -> {character.Hp}");
+                Console.Write($"HP {character.Hp}"); // 피격 전 체력
+                character.TakeDamage(currentDamage); // 피격 계산
+                Console.WriteLine($" -> {character.Hp}"); // 피격 후 체력
                 Console.WriteLine();
                 Console.WriteLine("0. 다음");
-                keyInput = ConsoleUtility.PromptMenuChoice(0);
+                ConsoleUtility.PromptMenuChoice(0);
                 foreach (Monster mon in monsters) // 모든 몬스터 무리를 스캔
                 {
                     if (mon.IsDead) deadCount++; // 현재 커서의 몬스터가 죽어있는 경우 카운트
                 }
                 if (deadCount == monsters.Count) deathEvent?.Invoke(character); // 현재 죽어있는 몬스터의 수가 몬스터 무리의 전체의 수와 같은가? (다 죽었나?)
-                BattleMenu(player);
+                BattleMenu(player); // 몬스터 차례
             }
-            else // 입력값이 Player인 경우 (플레이어를 공격한다.)
+            else // 입력값이 Player인 경우 (몬스터 차례)
             {
 
                 ICharacter[] opposites = monsters.ToArray(); // 상대방 : 몬스터 무리
@@ -407,24 +396,24 @@ namespace Chapter2_BY2
                     Console.Clear();
 
                     if (opposite.IsDead) continue; // 현재 커서의 몬스터가 죽어있는 경우 아래 코드 무시 후 재진입
-                    currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f));
+                    currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f)); // 가할 데미지 계산
                     Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
                     Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv {character.Level} {character.Name}");
-                    Console.Write($"HP {character.Hp}");
-                    character.TakeDamage(currentDamage);
-                    Console.WriteLine($" -> {character.Hp}");
+                    Console.Write($"HP {character.Hp}"); // 피격 전 체력
+                    character.TakeDamage(currentDamage); // 피격 계산
+                    Console.WriteLine($" -> {character.Hp}"); // 피격 후 체력
                     Console.WriteLine();
                     Console.WriteLine("0. 다음");
-                    keyInput = ConsoleUtility.PromptMenuChoice(0);
+                    ConsoleUtility.PromptMenuChoice(0);
                     if (character.IsDead) deathEvent?.Invoke(character); // 플레이어 죽은 경우 이벤스 실행
                 }
-                FightMenu();
+                FightMenu(); // 다시 전투 선택 메뉴으로 이동
             }
         }
 
-        private void RewardMenu(ICharacter character)
+        private void RewardMenu(ICharacter character) // 보상 메뉴
         {
             if (character is Player) Console.WriteLine("너희들이 나를 죽였다."); // 패배시
             else Console.WriteLine("내가 너희들를 죽였다."); // 승리시

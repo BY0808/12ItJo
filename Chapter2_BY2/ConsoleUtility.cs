@@ -31,7 +31,7 @@ namespace Chapter2_BY2
                 Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
             }
         }
-        public static int PromptMenuChoice(int input) // 정해진 키만 입력으로 받아오는 메서드
+        public static void PromptMenuChoice(int input) // 정해진 키만 입력으로 받아오는 메서드
         {
             while (true)
             {
@@ -39,7 +39,7 @@ namespace Chapter2_BY2
                 // TryParse 는 성공여부를 반환(bool), 성공시 && 로 넘어감 그리고 out 두번째 return 을 함
                 if (int.TryParse(Console.ReadLine(), out int choice) && choice == input)
                 {
-                    return choice;
+                    return;
                 }
                 Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
             }
