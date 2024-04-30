@@ -31,6 +31,19 @@ namespace Chapter2_BY2
                 Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
             }
         }
+        public static int PromptMenuChoice(int input)
+        {
+            while (true)
+            {
+                Console.Write("원하는 활동을 입력해주세요 >> ");
+                // TryParse 는 성공여부를 반환(bool), 성공시 && 로 넘어감 그리고 out 두번째 return 을 함
+                if (int.TryParse(Console.ReadLine(), out int choice) && choice == input)
+                {
+                    return choice;
+                }
+                Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
+            }
+        }
 
         //타이틀 보여주기 메소드
         internal static void ShowTitle(string title)
