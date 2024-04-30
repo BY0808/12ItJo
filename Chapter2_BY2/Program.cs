@@ -10,6 +10,13 @@ namespace Chapter2_BY2
 
         private List<Item> storeInventory;
 
+        List<Monster> monsters = new List<Monster>();
+
+        int bonusAtk, bonusDef, bonusHp;
+
+        private delegate void GameEvent(ICharacter character);
+        private event GameEvent deathEvent;
+
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
@@ -59,11 +66,12 @@ namespace Chapter2_BY2
             Console.WriteLine("1. 상태창");
             Console.WriteLine("2. 인벤");
             Console.WriteLine("3. 상점");
+            Console.WriteLine("4. 던전");
 
             Console.WriteLine();
 
             //2. 선택 결과를 검증
-            int choice = ConsoleUtility.PromptMenuChoice(1,3);
+            int choice = ConsoleUtility.PromptMenuChoice(1, 4);
 
             //3. 선택한 결과에 따라 보내줌
             switch (choice)
@@ -76,6 +84,9 @@ namespace Chapter2_BY2
                     break;
                 case 3:
                     StoreMenu();
+                    break;
+                case 4:
+                    DungeonMenu();
                     break;
             }
             MainMenu();
@@ -95,9 +106,9 @@ namespace Chapter2_BY2
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
             //장착된 아이템 수치의 합 구하기
-            int bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
-            int bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
-            int bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
+            bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
+            bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
+            bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
 
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
@@ -105,7 +116,7 @@ namespace Chapter2_BY2
             ConsoleUtility.PrintTextHighlights("체  력 : ", (player.Hp + bonusHp).ToString(), bonusHp > 0 ? $" (+{bonusHp})" : "");
 
             /*
-            ConsoleUtility.PrintTextHighlights("공격력 : ", player.Atk.ToString());
+            ConsoleUtility.PrintTextHighlights("공격력 : ", player.Attack.ToString());
             ConsoleUtility.PrintTextHighlights("방어력 : ", player.Def.ToString());
             ConsoleUtility.PrintTextHighlights("체  력 : ", player.Hp.ToString());
             */
@@ -114,7 +125,7 @@ namespace Chapter2_BY2
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
-            switch (ConsoleUtility.PromptMenuChoice(0, 0))
+            switch (ConsoleUtility.PromptMenuChoice(0))
             {
                 case 0:
                     MainMenu();
@@ -131,7 +142,7 @@ namespace Chapter2_BY2
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
             Console.WriteLine();
-            
+
             for (int i = 0; i < inventory.Count; i++)
             {
                 inventory[i].PrintItemStatDescription();
@@ -160,6 +171,7 @@ namespace Chapter2_BY2
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
             Console.WriteLine();
             Console.WriteLine("[아이템 목록]");
+            Console.WriteLine();
             for (int i = 0; i < inventory.Count; i++)
             {
                 inventory[i].PrintItemStatDescription(true, i + 1); // 나가기가 0번 고정, 나머지가 1번부터 배정
@@ -184,6 +196,8 @@ namespace Chapter2_BY2
 
         private void StoreMenu()
         {
+            Console.Clear();
+
             ConsoleUtility.ShowTitle("■ 상  점 ■");
             Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.");
             Console.WriteLine();
@@ -232,7 +246,7 @@ namespace Chapter2_BY2
             Console.WriteLine("[아이템 목록]");
             for (int i = 0; i < storeInventory.Count; i++)
             {
-                storeInventory[i].PrintStoreItemDescription(true, i+1);
+                storeInventory[i].PrintStoreItemDescription(true, i + 1);
             }
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
@@ -266,6 +280,52 @@ namespace Chapter2_BY2
                     }
                     break;
             }
+        }
+
+        private void DungeonMenu() // 던전 화면
+        {
+            Console.Clear();
+
+            ConsoleUtility.ShowTitle("■ 던 전 ■");
+            Console.WriteLine();
+            player.Hp = 100;
+            if (monsters.Count <= 0)
+            {
+                int monsterCount = new Random().Next(1, 5);
+                for (int i = 0; i < monsterCount; i++)
+                {
+                    MonsterType monsterType = (MonsterType)(new Random().Next(1, 4));
+                    switch (monsterType)
+                    {
+                        case MonsterType.Minion:
+                            Minion minion = new Minion();
+                            monsters.Add(minion);
+                            break;
+                        case MonsterType.Goblin:
+                            Goblin goblin = new Goblin();
+                            monsters.Add(goblin);
+                            break;
+                        case MonsterType.Dragon:
+                            Dragon dragon = new Dragon();
+                            monsters.Add(dragon);
+                            break;
+                    }
+                }
+            }
+            foreach (Monster mon in monsters)
+            {
+                string isDeadStr = mon.IsDead ? "사망" : "";
+                Console.Write(ConsoleUtility.PadRightForMixedText($"Lv {mon.Level} {mon.Name} |  HP {mon.Hp} ", 21));
+                Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {mon.Atk}", 11));
+                Console.WriteLine($"| {isDeadStr}");
+            }
+            ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
+
+            Console.WriteLine("\n1. 공격\n");
+
+            int keyInput = ConsoleUtility.PromptMenuChoice(1);
         }
     }
 
