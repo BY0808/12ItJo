@@ -5,7 +5,7 @@
         int Hp { get; set; }
         int Level { get; }
         string Name { get; }
-        int Attack { get; }
+        int Atk { get; }
         bool IsDead { get; }
         void TakeDamage(int damage);
 

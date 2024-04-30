@@ -22,7 +22,7 @@ namespace Chapter2_BY2
                 hp = value <= 0 ? 0 : value;
             }
         } // 몬스터 체력
-        public int Attack { get;}
+        public int Atk { get;}
         public bool IsDead => Hp <= 0;
 
         public Monster(string name, int hpMulti, int attackMulti)
@@ -30,7 +30,7 @@ namespace Chapter2_BY2
             Level = new Random().Next(1, 6);
             Name = name;
             Hp = Level * hpMulti;
-            Attack = Level * attackMulti;
+            Atk = Level * attackMulti;
         }
 
         public void TakeDamage(int damage) // 몬스터가 데미지를 받는 메서드
