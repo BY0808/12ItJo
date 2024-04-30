@@ -81,17 +81,19 @@ namespace Chapter2_BY2
                 Console.Write($"{idx} ");
                 Console.ResetColor();
             }
-            else Console.Write(ConsoleUtility.PadRightForMixedText(Name, 12));
+            Console.Write(ConsoleUtility.PadRightForMixedText(Name, 15));
 
             Console.Write(" | ");
 
+            string statStr = "";
             //공격력이 플러스면 + 표시
-            if (Atk != 0) Console.Write($"공격력 {(Atk >= 0 ? "+" : "")}{Atk} ");
-            if (Def != 0) Console.Write($"방어력 {(Atk >= 0 ? "+" : "")}{Def} ");
-            if (Hp != 0) Console.Write($"체  력 {(Atk >= 0 ? "+" : "")}{Hp} ");
+            if (Atk != 0) statStr = $" 공격력 {(Atk >= 0 ? "+" : "")}{Atk} ";
+            if (Def != 0) statStr = $" 방어력 {(Atk >= 0 ? "+" : "")}{Def} ";
+            if (Hp != 0) statStr = $" 체  력 {(Atk >= 0 ? "+" : "")}{Hp} ";
+            Console.Write(ConsoleUtility.PadRightForMixedText(statStr, 13));
 
             Console.Write(" | ");
-            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 12));
+            Console.Write(ConsoleUtility.PadRightForMixedText(Desc, 13));
             Console.Write(" | ");
 
             if (isPurchased)
