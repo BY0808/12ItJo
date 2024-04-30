@@ -36,6 +36,8 @@ namespace Chapter2_BY2
             storeInventory.Add(new Item("낡은 검", "적당한 무기", ItemType.WEAPON, 2, 0, 0, 600));
             storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
             storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
+
+            deathEvent += RewardMenu;
         }
 
         //Program 이라는 다른 클래스 접근!
@@ -420,6 +422,12 @@ namespace Chapter2_BY2
                 }
                 FightMenu();
             }
+        }
+
+        private void RewardMenu(ICharacter character)
+        {
+            if (character is Player) Console.WriteLine("너희들이 나를 죽였다."); // 패배시
+            else Console.WriteLine("내가 너희들를 죽였다."); // 승리시
         }
     }
 
