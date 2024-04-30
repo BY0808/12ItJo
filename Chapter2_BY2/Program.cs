@@ -363,6 +363,62 @@ namespace Chapter2_BY2
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
                     keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
                 }
+                else BattleMenu(monsters.ToArray()[keyInput - 1]);
+            }
+        }
+        private void BattleMenu(ICharacter character) //전투 화면
+        {
+            int keyInput;
+
+            ConsoleUtility.ShowTitle("■ Battle!! ■");
+            int currentDamage;
+            if (character is Monster) // 입력값이 Monster인 경우 (몬스터를 공격한다.)
+            {
+                int deadCount = 0; // 죽은 몬스터 수
+                Console.Clear();
+
+                ICharacter opposite = player; // 상대방 : 플레이어
+                currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f));
+                Console.WriteLine($"{opposite.Name}의 공격!");
+                Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                Console.WriteLine();
+                Console.WriteLine($"Lv {character.Level} {character.Name}");
+                Console.Write($"HP {character.Hp}");
+                character.TakeDamage(currentDamage);
+                Console.WriteLine($" -> {character.Hp}");
+                Console.WriteLine();
+                Console.WriteLine("0. 다음");
+                keyInput = ConsoleUtility.PromptMenuChoice(0);
+                foreach (Monster mon in monsters) // 모든 몬스터 무리를 스캔
+                {
+                    if (mon.IsDead) deadCount++; // 현재 커서의 몬스터가 죽어있는 경우 카운트
+                }
+                if (deadCount == monsters.Count) deathEvent?.Invoke(character); // 현재 죽어있는 몬스터의 수가 몬스터 무리의 전체의 수와 같은가? (다 죽었나?)
+                BattleMenu(player);
+            }
+            else // 입력값이 Player인 경우 (플레이어를 공격한다.)
+            {
+
+                ICharacter[] opposites = monsters.ToArray(); // 상대방 : 몬스터 무리
+                foreach (ICharacter opposite in opposites) // 모든 몬스터 무리가
+                {
+                    Console.Clear();
+
+                    if (opposite.IsDead) continue; // 현재 커서의 몬스터가 죽어있는 경우 아래 코드 무시 후 재진입
+                    currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f));
+                    Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
+                    Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    Console.WriteLine();
+                    Console.WriteLine($"Lv {character.Level} {character.Name}");
+                    Console.Write($"HP {character.Hp}");
+                    character.TakeDamage(currentDamage);
+                    Console.WriteLine($" -> {character.Hp}");
+                    Console.WriteLine();
+                    Console.WriteLine("0. 다음");
+                    keyInput = ConsoleUtility.PromptMenuChoice(0);
+                    if (character.IsDead) deathEvent?.Invoke(character); // 플레이어 죽은 경우 이벤스 실행
+                }
+                FightMenu();
             }
         }
     }
