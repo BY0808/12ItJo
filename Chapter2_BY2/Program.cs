@@ -54,8 +54,7 @@ namespace Chapter2_BY2
         public void SetName()
         {
             Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
-            string playerName = Console.ReadLine(); // 이름 입력 창
-            player.Name = playerName;
+            player.Name = Console.ReadLine(); // 이름 입력 창
             MainMenu();
         }
 
