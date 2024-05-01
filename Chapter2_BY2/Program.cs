@@ -135,6 +135,7 @@ namespace Chapter2_BY2
                     break;
                 case 0:
                     Console.Clear();
+                    ConsoleUtility.PrintGameEnd();
                     if (Console.ReadLine() == "0") //데이터 저장하기
                     {
                         //저장을 위한 객체 생성
