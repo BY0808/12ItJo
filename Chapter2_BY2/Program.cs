@@ -329,18 +329,10 @@ namespace Chapter2_BY2
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
-            Console.WriteLine("\n0. 나가기 1. 공격\n");
+            Console.WriteLine("\n1. 공격\n");
 
-            keyInput = ConsoleUtility.PromptMenuChoice(0, 1);
-            switch (keyInput)
-            {
-                case 0:
-                    MainMenu();
-                    break;
-                case 1:
-                    FightMenu();
-                    break;
-            }
+            ConsoleUtility.PromptMenuChoice(1);
+            FightMenu();
         }
 
         private void FightMenu() // 전투 선택 메뉴
