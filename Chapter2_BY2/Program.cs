@@ -35,12 +35,12 @@ namespace Chapter2_BY2
         private void InitializeGame() // 게임 시작 준비
         {
             //파일 위치 찾기
-            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json");
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json"); // 데이터 경로와 파일 이름 세팅 (현재 프로그램의 경로, 하위 폴더 이름, 파일 이름)
             // 저장파일 불러오기
-            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath);
+            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath); // 데이터 불러오기
 
             //기본적인 초기화!
-            if (loadedData == null)
+            if (loadedData == null) // 불러온 데이터가 없는가?
             {
                 inventory = new List<Item>(); // 인벤토리 객체 생성
 
@@ -52,7 +52,7 @@ namespace Chapter2_BY2
                 storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
                 storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
             }
-            else
+            else // 불러온 데이터가 있는가? (데이터를 적용시키기)
             {
                 player = loadedData.savePlayer;
                 inventory = loadedData.saveInventory;
