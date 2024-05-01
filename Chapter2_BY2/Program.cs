@@ -525,6 +525,7 @@ namespace Chapter2_BY2
 
         private void RewardMenu(ICharacter character) // 보상 메뉴
         {
+            Console.Clear();
             if (character is Player) // 패배시
             {
                 ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
