@@ -185,11 +185,6 @@ namespace Chapter2_BY2
             //TODO : 능력치 강화분 표현하도록 변경
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
-            //장착된 아이템 수치의 합 구하기
-            bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
-            bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
-            bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
-
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
             ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + bonusDef).ToString(), bonusDef > 0 ? $" (+{bonusDef})" : "");
@@ -260,6 +255,10 @@ namespace Chapter2_BY2
                 default:
                     //아이템 장착&해제 반복
                     inventory[keyInput - 1].ToggleEquipStatus();
+                    //장착된 아이템 수치의 합 구하기
+                    bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
+                    bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
+                    bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
                     EquipMenu();
                     break;
             }
