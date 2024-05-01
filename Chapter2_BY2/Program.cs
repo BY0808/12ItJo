@@ -25,6 +25,8 @@ namespace Chapter2_BY2
 
         List<Monster> fieldMonster = new List<Monster>(); // 몬스터의 공격 순서를 제어할 리스트
 
+        public string filePath; //파일위치
+
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
@@ -32,17 +34,33 @@ namespace Chapter2_BY2
 
         private void InitializeGame() // 게임 시작 준비
         {
-            //기본적인 초기화!
-            
-            inventory = new List<Item>(); // 인벤토리 객체 생성
+            //파일 위치 찾기
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json");
+            // 저장파일 불러오기
+            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath);
 
-            storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
-            storeInventory.Add(new Item("수련자 갑옷", "적당한 갑옷", ItemType.ARMOR, 0, 5, 0, 1000));
-            storeInventory.Add(new Item("무쇠갑옷", "조금좋은 갑옷", ItemType.ARMOR, 0, 9, 0, 1500));
-            storeInventory.Add(new Item("스파르타 갑옷", "좋은 갑옷", ItemType.ARMOR, 0, 15, 0, 3500));
-            storeInventory.Add(new Item("낡은 검", "적당한 무기", ItemType.WEAPON, 2, 0, 0, 600));
-            storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
-            storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
+            //기본적인 초기화!
+            if (loadedData == null)
+            {
+                inventory = new List<Item>(); // 인벤토리 객체 생성
+
+                storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
+                storeInventory.Add(new Item("수련자 갑옷", "적당한 갑옷", ItemType.ARMOR, 0, 5, 0, 1000));
+                storeInventory.Add(new Item("무쇠갑옷", "조금좋은 갑옷", ItemType.ARMOR, 0, 9, 0, 1500));
+                storeInventory.Add(new Item("스파르타 갑옷", "좋은 갑옷", ItemType.ARMOR, 0, 15, 0, 3500));
+                storeInventory.Add(new Item("낡은 검", "적당한 무기", ItemType.WEAPON, 2, 0, 0, 600));
+                storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
+                storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
+            }
+            else
+            {
+                player = loadedData.savePlayer;
+                inventory = loadedData.saveInventory;
+                storeInventory = loadedData.saveStoreInventory;
+                bonusAtk = loadedData.saveBonusAtk;
+                bonusDef = loadedData.saveBonusDef;
+                bonusHp = loadedData.saveBonusHp;
+            }
 
             deathEvent += RewardMenu; // 이벤트 메서드에 해당 메서드 추가
         }
@@ -92,11 +110,13 @@ namespace Chapter2_BY2
             Console.WriteLine("2. 인벤");
             Console.WriteLine("3. 상점");
             Console.WriteLine("4. 던전");
+            Console.WriteLine();
+            Console.WriteLine("0. 게임 끝내기");
 
             Console.WriteLine();
 
             //2. 선택 결과를 검증
-            keyInput = ConsoleUtility.PromptMenuChoice(1, 4);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, 4);
 
             //3. 선택한 결과에 따라 보내줌
             switch (keyInput)
@@ -112,6 +132,39 @@ namespace Chapter2_BY2
                     break;
                 case 4:
                     DungeonMenu();
+                    break;
+                case 0:
+                    Console.Clear();
+                    if (Console.ReadLine() == "0") //데이터 저장하기
+                    {
+                        //저장을 위한 객체 생성
+                        SaveData saveData = new SaveData
+                        {
+                            savePlayer = player,
+                            saveInventory = inventory,
+                            saveStoreInventory = storeInventory,
+                            saveBonusAtk = bonusAtk,
+                            saveBonusDef = bonusDef,
+                            saveBonusHp = bonusHp
+                        };
+                        //데이터 저장 폴더 경로 설정
+                        string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
+
+                        //폴더가 없으면 생성
+                        if (!Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+
+                        //Json 파일 경로 설정
+                        filePath = Path.Combine(directoryPath, "data.json");
+
+                        //데이터를 Json 파일에 저장
+                        SaveData.SaveDataToJsonFile(saveData, filePath);
+
+                        Console.WriteLine("게임을 저장합니다.");
+                        Environment.Exit(0);
+                    }
                     break;
             }
             MainMenu();
