@@ -48,6 +48,14 @@ namespace Chapter2_BY2
             Console.Clear();
             //static 으로 정의된 함수라 인스턴스 없이 호출
             ConsoleUtility.PrintGameHeader();
+            SetName();
+        }
+
+        public void SetName()
+        {
+            Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
+            string playerName = Console.ReadLine(); // 이름 입력 창
+            player.Name = playerName;
             MainMenu();
         }
 
@@ -63,9 +71,6 @@ namespace Chapter2_BY2
             Console.WriteLine("소환자의 마을에 오신것을 환영합니다.");
             Console.WriteLine("이곳에서 소환되기전 활동을 수행 할 수 있습니다.");
             Console.WriteLine();
-            Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
-            string playerName = Console.ReadLine(); // 이름 입력 창
-            player.Name = playerName;
             Console.WriteLine("--------------------------------------------------------");
 
 
