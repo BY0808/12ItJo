@@ -17,6 +17,10 @@ namespace Chapter2_BY2
         private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
         private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
 
+        int currentHp; // 던전 진입시 체력을 저장할 변수
+
+        int keyInput; // 키를 입력받을 변수 
+
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
@@ -73,10 +77,10 @@ namespace Chapter2_BY2
             Console.WriteLine();
 
             //2. 선택 결과를 검증
-            int choice = ConsoleUtility.PromptMenuChoice(1, 4);
+            keyInput = ConsoleUtility.PromptMenuChoice(1, 4);
 
             //3. 선택한 결과에 따라 보내줌
-            switch (choice)
+            switch (keyInput)
             {
                 case 1:
                     StatusMenu();
@@ -172,7 +176,7 @@ namespace Chapter2_BY2
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
 
             switch (keyInput)
             {
@@ -245,7 +249,7 @@ namespace Chapter2_BY2
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
 
             switch (keyInput)
             {
@@ -281,9 +285,9 @@ namespace Chapter2_BY2
 
             ConsoleUtility.ShowTitle("■ 던 전 ■");
             Console.WriteLine();
-            player.Hp = 100;
             if (monsters.Count <= 0) // 현재 몬스터 수가 0이하 인가?
             {
+                currentHp = player.Hp; // 던전 진입시 현재 체력 저장
                 int monsterCount = new Random().Next(1, 5); // 1 ~ 4 마리의 몬스터 소환
                 for (int i = 0; i < monsterCount; i++)
                 {
@@ -316,10 +320,18 @@ namespace Chapter2_BY2
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
-            Console.WriteLine("\n1. 공격\n");
+            Console.WriteLine("\n0. 나가기 1. 공격\n");
 
-            ConsoleUtility.PromptMenuChoice(1);
-            FightMenu();
+            keyInput = ConsoleUtility.PromptMenuChoice(0, 1);
+            switch (keyInput)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    FightMenu();
+                    break;
+            }
         }
 
         private void FightMenu() // 전투 선택 메뉴
@@ -344,7 +356,7 @@ namespace Chapter2_BY2
             Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택"); // 해당 문자열 표시
             Console.WriteLine("0. 취소");
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
             while (true) // 유효하는 값이 입력될 때 까지 계속 반복
             {
                 if (keyInput == 0) // 0번 선택
@@ -423,8 +435,32 @@ namespace Chapter2_BY2
 
         private void RewardMenu(ICharacter character) // 보상 메뉴
         {
-            if (character is Player) Console.WriteLine("너희들이 나를 죽였다."); // 패배시
-            else Console.WriteLine("내가 너희들를 죽였다."); // 승리시
+            if (character is Player) // 패배시
+            {
+                ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
+                ConsoleUtility.PrintTextHighlights("\n", "You Lose\n");
+
+                Console.WriteLine($"Lv {player.Level} {player.Name}");
+                Console.WriteLine($"HP {currentHp} -> {player.Hp}");
+
+                ConsoleUtility.PromptMenuChoice(0);
+
+                player.Hp = 100;
+            }
+            else // 승리시
+            {
+                ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
+                ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
+
+                Console.WriteLine($"던전에서 몬스터 {monsters.Count}마리를 잡았습니다.");
+
+                Console.WriteLine($"Lv {player.Level} {player.Name}");
+                Console.WriteLine($"HP {currentHp} -> {player.Hp}");
+
+                ConsoleUtility.PromptMenuChoice(0);
+            }
+            monsters.Clear();
+            MainMenu();
         }
     }
 
