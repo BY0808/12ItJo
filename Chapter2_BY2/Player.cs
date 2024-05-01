@@ -5,7 +5,7 @@
         private int hp { get; set; } // 체력 필드
 
         //get 만 있는 프로퍼티 > 생성자 이후 Set 하지 않겠다! > 읽기전용
-        public string Name { get; } // 이름
+        public string Name { get; set; } // 이름
         public string Job { get; } // 직업
         public int Level { get; } // 레벨
         public int Atk { get; } // 공격력
