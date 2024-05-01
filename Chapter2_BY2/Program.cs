@@ -64,7 +64,7 @@ namespace Chapter2_BY2
             Console.WriteLine("이곳에서 소환되기전 활동을 수행 할 수 있습니다.");
             Console.WriteLine();
             Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
-            string playerName = Console.ReadLine();
+            string playerName = Console.ReadLine(); // 이름 입력 창
             player.Name = playerName;
             Console.WriteLine("--------------------------------------------------------");
 
