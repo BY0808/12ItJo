@@ -1,6 +1,8 @@
 ﻿
 
 
+using System.Xml.Linq;
+
 namespace Chapter2_BY2
 {
     public class GameManager
@@ -26,7 +28,6 @@ namespace Chapter2_BY2
         {
             //기본적인 초기화!
             player = new Player("BoB", "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
-
             inventory = new List<Item>(); // 인벤토리 객체 생성
 
             storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
@@ -62,6 +63,9 @@ namespace Chapter2_BY2
             Console.WriteLine("소환자의 마을에 오신것을 환영합니다.");
             Console.WriteLine("이곳에서 소환되기전 활동을 수행 할 수 있습니다.");
             Console.WriteLine();
+            Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
+            string playerName = Console.ReadLine();
+            player.Name = playerName;
             Console.WriteLine("--------------------------------------------------------");
 
 
