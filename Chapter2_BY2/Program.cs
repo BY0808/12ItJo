@@ -392,12 +392,13 @@ namespace Chapter2_BY2
             Random evade = new Random();
             int evadePer = evade.Next(101);
 
-            ConsoleUtility.ShowTitle("■ Battle!! ■");
             int currentDamage;
             if (character is Monster) // 입력값이 Monster인 경우 (플레이어 차례)
             {
                 int deadCount = 0; // 죽은 몬스터 수
                 Console.Clear();
+
+                ConsoleUtility.ShowTitle("■ Battle!! ■\n");
 
                 ICharacter opposite = player; // 상대방 : 플레이어
                 //currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
@@ -458,6 +459,8 @@ namespace Chapter2_BY2
                 {
                     Console.Clear();
 
+                    ConsoleUtility.ShowTitle("■ Battle!! ■\n");
+
                     if (opposite.IsDead) continue; // 현재 커서의 몬스터가 죽어있는 경우 아래 코드 무시 후 재진입
                     //currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f)); // 가할 데미지 계산
                     int sign = new Random().Next(-1, 2); // 부호 (-1, 0, 1)
@@ -467,7 +470,7 @@ namespace Chapter2_BY2
                     
                     if (evadePer < 10)   // 플레이어가 회피
                     {
-                        Console.WriteLine($"{opposite.Name}의 공격!");
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
 
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
@@ -477,7 +480,7 @@ namespace Chapter2_BY2
                     else if (critPer < 5)  //플레이어가 맞는 크리티컬
                     {
                         currentDamage = (int)Math.Ceiling(currentDamage * 1.6f);
-                        Console.WriteLine($"{opposite.Name}의 공격!");
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
 
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.Write("치명적인 일격!");
