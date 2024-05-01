@@ -21,6 +21,8 @@ namespace Chapter2_BY2
 
         int keyInput; // 키를 입력받을 변수 
 
+        List<Monster> fieldMonster = new List<Monster>(); // 몬스터의 공격 순서를 제어할 리스트
+
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
@@ -317,6 +319,7 @@ namespace Chapter2_BY2
                 Console.Write(ConsoleUtility.PadRightForMixedText($"Lv {mon.Level} {mon.Name} |  HP {mon.Hp} ", 21));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {mon.Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
+                Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
@@ -373,7 +376,16 @@ namespace Chapter2_BY2
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
                     keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count); // 재입력 후 반복. while이 없는 경우 정상적인 입력으로 판단함.
                 }
-                else BattleMenu(monsters.ToArray()[keyInput - 1]); // 전투 메뉴 진입
+                else
+                {
+                    fieldMonster.Add(monsters.ToArray()[keyInput - 1]);
+                    for (int i = 0; i < monsters.Count; i++)
+                    {
+                        if (i == keyInput - 1) continue;
+                        fieldMonster.Add(monsters.ToArray()[i]);
+                    }
+                    BattleMenu(monsters.ToArray()[keyInput - 1]); // 전투 메뉴 진입
+                }
             }
         }
         private void BattleMenu(ICharacter character) //전투 메뉴
@@ -445,7 +457,7 @@ namespace Chapter2_BY2
             else // 입력값이 Player인 경우 (몬스터 차례)
             {
 
-                ICharacter[] opposites = monsters.ToArray(); // 상대방 : 몬스터 무리
+                ICharacter[] opposites = fieldMonster.ToArray(); // 상대방 : 몬스터 무리
                 foreach (ICharacter opposite in opposites) // 모든 몬스터 무리가
                 {
                     Console.Clear();
@@ -494,6 +506,7 @@ namespace Chapter2_BY2
                     ConsoleUtility.PromptMenuChoice(0);
                     if (character.IsDead) deathEvent?.Invoke(character); // 플레이어 죽은 경우 이벤스 실행
                 }
+                fieldMonster.Clear();
                 FightMenu(); // 다시 전투 선택 메뉴으로 이동
             }
         }
@@ -524,6 +537,7 @@ namespace Chapter2_BY2
 
                 ConsoleUtility.PromptMenuChoice(0);
             }
+            fieldMonster.Clear();
             monsters.Clear();
             MainMenu();
         }
