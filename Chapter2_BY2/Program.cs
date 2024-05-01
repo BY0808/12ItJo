@@ -361,6 +361,12 @@ namespace Chapter2_BY2
         }
         private void BattleMenu(ICharacter character) //전투 메뉴
         {
+            Random crit = new Random();
+            int critPer = crit.Next(101);
+
+            Random evade = new Random();
+            int evadePer = evade.Next(101);
+
             ConsoleUtility.ShowTitle("■ Battle!! ■");
             int currentDamage;
             if (character is Monster) // 입력값이 Monster인 경우 (플레이어 차례)
@@ -374,6 +380,36 @@ namespace Chapter2_BY2
                 float percent = new Random().Next(1, 101) * 0.001f; // 0.1퍼센트 ~ 10퍼센트
                 currentDamage = opposite.Atk + bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent)));
                 //Console.WriteLine($"{opposite.Atk+bonusAtk}, {sign}, {percent * 100}, {(opposite.Atk + bonusAtk) * percent}, {(int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent))}");
+                
+                if (evadePer < 10)  // 플레이어가 공격 실패
+                {
+                    currentDamage = 0;
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
+                    Console.ResetColor();
+                }
+
+                else if (critPer < 15) // 플레이어가 크리티컬
+                {
+                    currentDamage = (int)Math.Ceiling(currentDamage * 1.6f);
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write("치명적인 일격!");
+                    Console.ResetColor();
+
+                    Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                }
+
+                else
+                {
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+                    Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+
+                }
+
                 Console.WriteLine($"{opposite.Name}의 공격!");
                 Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                 Console.WriteLine();
@@ -405,6 +441,34 @@ namespace Chapter2_BY2
                     float percent = new Random().Next(1, 101) * 0.001f; // 오차 정밀도를 높이고 싶으면 Next의 최댓값을 올리고 곱하는 0.001f의 자릿수를 늘린다.
                     currentDamage = opposite.Atk + (sign * (int)Math.Ceiling(opposite.Atk * percent));
                     //Console.WriteLine($"{opposite.Atk}, {sign}, {percent * 100}, {opposite.Atk * percent}, {(int)Math.Ceiling(opposite.Atk * percent)}");
+                    
+                    if (evadePer < 10)   // 플레이어가 회피
+                    {
+                        Console.WriteLine($"{opposite.Name}의 공격!");
+
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
+                        Console.ResetColor();
+                    }
+
+                    else if (critPer < 5)  //플레이어가 맞는 크리티컬
+                    {
+                        currentDamage = (int)Math.Ceiling(currentDamage * 1.6f);
+                        Console.WriteLine($"{opposite.Name}의 공격!");
+
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write("치명적인 일격!");
+                        Console.ResetColor();
+
+                        Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    }
+
+                    else
+                    {
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
+                        Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    }
+
                     Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
                     Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                     Console.WriteLine();
