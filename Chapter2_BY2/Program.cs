@@ -33,7 +33,7 @@ namespace Chapter2_BY2
         private void InitializeGame() // 게임 시작 준비
         {
             //기본적인 초기화!
-            player = new Player("BoB", "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+            
             inventory = new List<Item>(); // 인벤토리 객체 생성
 
             storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
@@ -54,9 +54,24 @@ namespace Chapter2_BY2
             Console.Clear();
             //static 으로 정의된 함수라 인스턴스 없이 호출
             ConsoleUtility.PrintGameHeader();
-            MainMenu();
+            //MainMenu();
+            InsertNameMenu();
         }
 
+        public void InsertNameMenu() // 플레이어 이름 입력 메뉴
+        {
+            Console.Clear();
+            string playerName;
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
+            do
+            {
+                playerName = Console.ReadLine(); // 이름 입력 창
+                if (playerName == "") Console.WriteLine("다시 입력해주세요."); // 입력된 이름이 공백인 경우, 메시지 출력
+            } while (playerName == ""); // 입력된 이름이 공백인 경우 계속 반복
+            player = new Player(playerName, "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+            MainMenu();
+        }
         private void MainMenu() // 메인 메뉴
         {
             //구성
@@ -70,8 +85,6 @@ namespace Chapter2_BY2
             Console.WriteLine("이곳에서 소환되기전 활동을 수행 할 수 있습니다.");
             Console.WriteLine();
             Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
-            string playerName = Console.ReadLine(); // 이름 입력 창
-            player.Name = playerName;
             Console.WriteLine("--------------------------------------------------------");
 
 
