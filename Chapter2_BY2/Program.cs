@@ -422,8 +422,6 @@ namespace Chapter2_BY2
 
                 }
 
-                Console.WriteLine($"{opposite.Name}의 공격!");
-                Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                 Console.WriteLine();
                 Console.WriteLine($"Lv {character.Level} {character.Name}");
                 Console.Write($"HP {character.Hp}"); // 피격 전 체력
@@ -481,8 +479,6 @@ namespace Chapter2_BY2
                         Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                     }
 
-                    Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
-                    Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
                     Console.WriteLine();
                     Console.WriteLine($"Lv {character.Level} {character.Name}");
                     Console.Write($"HP {character.Hp}"); // 피격 전 체력
