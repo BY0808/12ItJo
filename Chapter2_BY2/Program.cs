@@ -312,6 +312,8 @@ namespace Chapter2_BY2
             foreach (Monster mon in monsters) // 모든 몬스터 리스트 스캔하여 하나씩 표시
             {
                 string isDeadStr = mon.IsDead ? "사망" : "";
+                if (mon.IsDead) Console.ForegroundColor = ConsoleColor.DarkGray;
+
                 Console.Write(ConsoleUtility.PadRightForMixedText($"Lv {mon.Level} {mon.Name} |  HP {mon.Hp} ", 21));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {mon.Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
@@ -344,9 +346,12 @@ namespace Chapter2_BY2
             for (int i = 0; i < monsters.Count; i++) // 몬스터 리스트의 수 만큼 표시
             {
                 string isDeadStr = monsters.ToArray()[i].IsDead ? "사망" : ""; // 해당 몬스터가 죽어있는 경우 "사망" 표시. 아닌 경우 공백.
+                if (monsters.ToArray()[i].IsDead) Console.ForegroundColor = ConsoleColor.DarkGray;
+
                 Console.Write(ConsoleUtility.PadRightForMixedText($"{i + 1}- Lv {monsters.ToArray()[i].Level} {monsters.ToArray()[i].Name} |  HP {monsters.ToArray()[i].Hp} ", 24));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {monsters.ToArray()[i].Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
+                Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
