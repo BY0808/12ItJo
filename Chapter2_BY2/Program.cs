@@ -72,8 +72,9 @@ namespace Chapter2_BY2
             Console.Clear();
             //static 으로 정의된 함수라 인스턴스 없이 호출
             ConsoleUtility.PrintGameHeader();
-            //MainMenu();
-            InsertNameMenu();
+            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath);
+            if(loadedData == null) InsertNameMenu();
+            else MainMenu();
         }
 
         public void InsertNameMenu() // 플레이어 이름 입력 메뉴
