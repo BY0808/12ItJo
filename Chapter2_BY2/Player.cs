@@ -45,7 +45,7 @@
         /// </summary>
         public int Gold { get; set; }
         /// <summary>
-        /// 사망 여부 프로퍼티 (Hp가 0 이하일 경우 false)
+        /// 사망 여부 프로퍼티 (Hp가 0 이하일 경우 true)
         /// </summary>>
         public bool IsDead => Hp <= 0;
         /// <summary>
@@ -77,9 +77,9 @@
         }
 
         /// <summary>
-        /// 데미지를 받는 메서드
+        /// 데미지 피격 메서드
         /// </summary>
-        /// <param name="damage">입는 데미지</param>
+        /// <param name="damage">피격 데미지</param>
         public void TakeDamage(int damage) // 플레이어가 데미지를 받는 메서드
         {
             Hp -= damage;
