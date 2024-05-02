@@ -7,32 +7,74 @@ namespace Chapter2_BY2
 {
     public class GameManager
     {
-        private Player player; // 플레이어 객체
-        private List<Item> inventory; // 인벤토리 리스트
-
-        private List<Item> storeInventory; // 상점 품목 리스트
-
-        List<Monster> monsters = new List<Monster>(); // 몬스터를 저장할 리스트
-
-        int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
-
-        int[] minionSpawnRate = { 70, 40, 30, 0 }; // 층 별 몬스터의 소환 확률
+        /// <summary>
+        /// 플레이어 객체
+        /// </summary>
+        private Player player;
+        /// <summary>
+        /// 인벤토리 리스트
+        /// </summary>
+        private List<Item> inventory;
+        /// <summary>
+        /// 상점 품목 리스트
+        /// </summary>
+        private List<Item> storeInventory;
+        /// <summary>
+        /// 던전에서 표시할 몬스터 리스트
+        /// </summary>
+        List<Monster> monsters = new List<Monster>();
+        /// <summary>
+        /// 공격 순서를 제어할 몬스터 리스트
+        /// </summary>
+        List<Monster> fieldMonster = new List<Monster>();
+        /// <summary>
+        /// 추가 수치 (Atk 공격력, Def 방어력, Hp 체력)
+        /// </summary>
+        int bonusAtk, bonusDef, bonusHp;
+        /// <summary>
+        /// 스테이지별 미니언 생성 확률 { 70, 40, 30, 0 }
+        /// </summary>
+        int[] minionSpawnRate = { 70, 40, 30, 0 };
+        /// <summary>
+        /// 스테이지별 고블린 생성 확률 { 30, 60, 30, 50 }
+        /// </summary>
         int[] goblinSpawnRate = { 30, 60, 30, 50 };
+        /// <summary>
+        /// 스테이지별 드래곤 생성 확률 { 0, 0, 40, 50 }
+        /// </summary>
         int[] dragonSpawnRate = { 0, 0, 40, 50 };
-        int[] monstersSpawnMax = { 2, 3, 4, 3 }; // 층 별 몬스터 최대 수
-
-        private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
+        /// <summary>
+        /// 스테이지별 최대 몬스터 수 { 2, 3, 4, 3 }
+        /// </summary>
+        int[] monstersSpawnMax = { 2, 3, 4, 3 };
+        /// <summary>
+        /// ICharacter 인터페이스를 상속받은 클래스를 사용할 대리자
+        /// </summary>
+        /// <param name="character">플레이어 혹은 몬스터</param>
+        private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수)
+        /// <summary>
+        /// 플레이어 혹은 몬스터가 사망하면 발생하는 이벤트
+        /// </summary>
         private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
-
-        int currentHp; // 던전 진입시 체력을 저장할 변수
-
-        int keyInput; // 키를 입력받을 변수 
-
-        List<Monster> fieldMonster = new List<Monster>(); // 몬스터의 공격 순서를 제어할 리스트
-
+        /// <summary>
+        /// 던전에 진입할 때 현재 체력을 저장할 변수
+        /// </summary>
+        int currentHp;
+        /// <summary>
+        /// 키보드의 정수 입력을 받을 변수
+        /// </summary>
+        int keyInput;
+        /// <summary>
+        /// 파일 이름까지 포함한 파일 경로
+        /// </summary>
         public string filePath; //파일위치
+        /// <summary>
+        /// 플레이어 이름
+        /// </summary>
         public string playerName; //입력받을 플레이어 이름
-
+        /// <summary>
+        /// 스테이지 번호를 저장할 변수
+        /// </summary>
         int dungeonIdx;
 
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
@@ -40,6 +82,9 @@ namespace Chapter2_BY2
             InitializeGame();
         }
 
+        /// <summary>
+        /// 게임 시작 전 기본적인 데이터를 초기화 하는 메서드 (인벤토리 & 상점 목록 & 사망 이벤트)
+        /// </summary>
         private void InitializeGame() // 게임 시작 준비
         {
             //기본적인 초기화!
@@ -57,6 +102,9 @@ namespace Chapter2_BY2
         }
 
         //Program 이라는 다른 클래스 접근!
+        /// <summary>
+        /// 게임을 시작하는 메서드
+        /// </summary>
         public void StartGame() // 게임 시작
         {
             //콘솔 게임은 콘솔 지워주는걸 지속해야함..!
@@ -65,7 +113,9 @@ namespace Chapter2_BY2
             ConsoleUtility.PrintGameHeader();
             InsertNameMenu();
         }
-
+        /// <summary>
+        /// 플레이어 이름을 입력받는 메서드
+        /// </summary>
         public void InsertNameMenu() // 플레이어 이름 입력 메뉴
         {
             Console.Clear();
@@ -96,6 +146,9 @@ namespace Chapter2_BY2
 
             MainMenu();
         }
+        /// <summary>
+        /// 메인 메뉴를 표시하는 메서드
+        /// </summary>
         private void MainMenu() // 메인 메뉴
         {
             //구성
@@ -171,7 +224,9 @@ namespace Chapter2_BY2
             }
             MainMenu();
         }
-
+        /// <summary>
+        /// 상태창을 표시하는 메서드
+        /// </summary>
         private void StatusMenu() // 상태창 메뉴
         {
             Console.Clear();
@@ -198,7 +253,9 @@ namespace Chapter2_BY2
             ConsoleUtility.PromptMenuChoice(0);
             MainMenu();
         }
-
+        /// <summary>
+        /// 인벤토리를 표시하는 메서드
+        /// </summary>
         private void InventoryMenu() // 인벤토리 메뉴
         {
             Console.Clear();
@@ -228,7 +285,9 @@ namespace Chapter2_BY2
                     break;
             }
         }
-
+        /// <summary>
+        /// 인벤토리 - 장비창을 표시하는 메서드
+        /// </summary>
         private void EquipMenu() // 장착 메뉴
         {
             Console.Clear();
@@ -263,7 +322,9 @@ namespace Chapter2_BY2
                     break;
             }
         } 
-
+        /// <summary>
+        /// 상점 메뉴를 표시하는 메서드
+        /// </summary>
         private void StoreMenu() // 상점 메뉴
         {
             Console.Clear();
@@ -293,7 +354,10 @@ namespace Chapter2_BY2
                     break;
             }
         } 
-
+        /// <summary>
+        /// 상점 - 구매 화면을 표시하는 메서드 (필요한 경우 문자열을 먼저 표시)
+        /// </summary>
+        /// <param name="prompt"></param>
         private void PurchaseMenu(string? prompt = null) // 상점 구매 메뉴
         {
             //경고 메세지 띄우기
@@ -351,7 +415,9 @@ namespace Chapter2_BY2
                     break;
             }
         }
-
+        /// <summary>
+        /// 던전 입구를 표시하는 메서드
+        /// </summary>
         private void DungeonEntranceMenu()
         {
             Console.Clear();
@@ -387,6 +453,9 @@ namespace Chapter2_BY2
                     break;
             }
         }
+        /// <summary>
+        /// 던전 내부를 표시하는 메서드
+        /// </summary>
         private void DungeonMenu() // 던전 메뉴
         {
             Console.Clear();
@@ -446,7 +515,9 @@ namespace Chapter2_BY2
             ConsoleUtility.PromptMenuChoice(1);
             FightMenu();
         }
-
+        /// <summary>
+        /// 던전 - 몬스터 선택 메뉴를 표시하는 메서드
+        /// </summary>
         private void FightMenu() // 전투 선택 메뉴
         {
             Console.Clear();
@@ -496,6 +567,10 @@ namespace Chapter2_BY2
                 }
             }
         }
+        /// <summary>
+        /// 데미지를 주고 받는 메뉴를 표시하는 메서드
+        /// </summary>
+        /// <param name="character"></param>
         private void BattleMenu(ICharacter character) //전투 메뉴
         {
             Random crit = new Random();
@@ -621,7 +696,10 @@ namespace Chapter2_BY2
                 FightMenu(); // 다시 전투 선택 메뉴으로 이동
             }
         }
-
+        /// <summary>
+        /// 승리 / 패배 화면을 표시하는 메서드
+        /// </summary>
+        /// <param name="character"></param>
         private void RewardMenu(ICharacter character) // 보상 메뉴
         {
             Console.Clear();
