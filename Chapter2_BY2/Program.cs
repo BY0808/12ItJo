@@ -16,8 +16,22 @@ namespace Chapter2_BY2
 
         int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
 
+        int[] minionSpawnRate = { 70, 40, 30, 0 }; // 층 별 몬스터의 소환 확률
+        int[] goblinSpawnRate = { 30, 60, 30, 50 };
+        int[] dragonSpawnRate = { 0, 0, 40, 50 };
+        int[] monstersSpawnMax = { 2, 3, 4, 3 }; // 층 별 몬스터 최대 수
+
         private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
         private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
+
+        int currentHp; // 던전 진입시 체력을 저장할 변수
+
+        int keyInput; // 키를 입력받을 변수 
+
+        List<Monster> fieldMonster = new List<Monster>(); // 몬스터의 공격 순서를 제어할 리스트
+
+        public string filePath; //파일위치
+        public string playerName; //입력받을 플레이어 이름
 
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
@@ -27,7 +41,6 @@ namespace Chapter2_BY2
         private void InitializeGame() // 게임 시작 준비
         {
             //기본적인 초기화!
-            player = new Player("BoB", "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
             inventory = new List<Item>(); // 인벤토리 객체 생성
 
             storeInventory = new List<Item>(); // 상점 품목 리스트 생성 & 리스트 추가
@@ -37,7 +50,7 @@ namespace Chapter2_BY2
             storeInventory.Add(new Item("낡은 검", "적당한 무기", ItemType.WEAPON, 2, 0, 0, 600));
             storeInventory.Add(new Item("청동 도끼", "조금좋은 무기", ItemType.WEAPON, 5, 0, 0, 1500));
             storeInventory.Add(new Item("스파르타 창", "좋은 무기", ItemType.WEAPON, 7, 0, 0, 3500));
-
+            
             deathEvent += RewardMenu; // 이벤트 메서드에 해당 메서드 추가
         }
 
@@ -48,16 +61,50 @@ namespace Chapter2_BY2
             Console.Clear();
             //static 으로 정의된 함수라 인스턴스 없이 호출
             ConsoleUtility.PrintGameHeader();
-            SetName();
+            InsertNameMenu();
         }
 
-        public void SetName()
+//        public void SetName()
+//        {
+//            Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
+//            player.Name = Console.ReadLine(); // 이름 입력 창
+//            MainMenu();
+//=======
+//            InsertNameMenu();
+//>>>>>>> Dev
+//        }
+
+        public void InsertNameMenu() // 플레이어 이름 입력 메뉴
         {
+            Console.Clear();
+            string playerName;
+            Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
             Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
-            player.Name = Console.ReadLine(); // 이름 입력 창
+            do
+            {
+                playerName = Console.ReadLine(); // 이름 입력 창
+                if (playerName == "") Console.WriteLine("다시 입력해주세요."); // 입력된 이름이 공백인 경우, 메시지 출력
+            } while (playerName == ""); // 입력된 이름이 공백인 경우 계속 반복
+            player = new Player(playerName, "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+
+            //이름을 입력 받은 후 파일을 불러와 비교함
+            //파일 위치 찾기
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json");
+            // 저장파일 불러오기
+            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath, playerName);
+
+            if (loadedData != null)
+            {
+                player = loadedData.savePlayer;
+                inventory = loadedData.saveInventory;
+                storeInventory = loadedData.saveStoreInventory;
+                bonusAtk = loadedData.saveBonusAtk;
+                bonusDef = loadedData.saveBonusDef;
+                bonusHp = loadedData.saveBonusHp;
+            }
+
             MainMenu();
         }
-
         private void MainMenu() // 메인 메뉴
         {
             //구성
@@ -77,14 +124,16 @@ namespace Chapter2_BY2
             Console.WriteLine("2. 인벤");
             Console.WriteLine("3. 상점");
             Console.WriteLine("4. 던전");
+            Console.WriteLine();
+            Console.WriteLine("0. 게임 끝내기");
 
             Console.WriteLine();
 
             //2. 선택 결과를 검증
-            int choice = ConsoleUtility.PromptMenuChoice(1, 4);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, 4);
 
             //3. 선택한 결과에 따라 보내줌
-            switch (choice)
+            switch (keyInput)
             {
                 case 1:
                     StatusMenu();
@@ -96,7 +145,37 @@ namespace Chapter2_BY2
                     StoreMenu();
                     break;
                 case 4:
-                    DungeonMenu();
+                    DungeonEntranceMenu();
+                    break;
+                case 0:
+                    Console.Clear();
+                    ConsoleUtility.PrintGameEnd();
+                    if (Console.ReadLine() == "0") //데이터 저장하기
+                    {
+                        //저장을 위한 딕셔너리 만들기
+                        Dictionary<string, SaveData> playerDataDic = new Dictionary<string, SaveData>();
+                        //저장을 위한 객체 생성
+                        SaveData playerData = new SaveData(player, inventory, storeInventory, bonusAtk, bonusDef, bonusHp);
+                        //딕셔너리에 저장을 위한 데이터 넣기
+                        playerDataDic[player.Name] = playerData;
+                        //데이터 저장 폴더 경로 설정
+                        string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
+
+                        //폴더가 없으면 생성
+                        if (!Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+
+                        //Json 파일 경로 설정
+                        filePath = Path.Combine(directoryPath, "data.json");
+
+                        //딕셔너리 데이터를 Json 파일에 저장
+                        SaveData.SaveDataToJsonFile(playerDataDic, filePath);
+
+                        Console.WriteLine("게임을 저장합니다.");
+                        Environment.Exit(0);
+                    }
                     break;
             }
             MainMenu();
@@ -114,11 +193,6 @@ namespace Chapter2_BY2
             //문자열 보간
             //TODO : 능력치 강화분 표현하도록 변경
             Console.WriteLine($"{player.Name} ( {player.Job} )");
-
-            //장착된 아이템 수치의 합 구하기
-            bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
-            bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
-            bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
 
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
@@ -180,7 +254,7 @@ namespace Chapter2_BY2
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, inventory.Count);
 
             switch (keyInput)
             {
@@ -190,6 +264,10 @@ namespace Chapter2_BY2
                 default:
                     //아이템 장착&해제 반복
                     inventory[keyInput - 1].ToggleEquipStatus();
+                    //장착된 아이템 수치의 합 구하기
+                    bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
+                    bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
+                    bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
                     EquipMenu();
                     break;
             }
@@ -253,7 +331,7 @@ namespace Chapter2_BY2
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, storeInventory.Count);
 
             switch (keyInput)
             {
@@ -283,19 +361,58 @@ namespace Chapter2_BY2
             }
         }
 
-        private void DungeonMenu() // 던전 메뉴
+        private void DungeonEntranceMenu()
         {
             Console.Clear();
 
-            ConsoleUtility.ShowTitle("■ 던 전 ■");
+            ConsoleUtility.ShowTitle("■ 던 전   입 구■");
             Console.WriteLine();
-            player.Hp = 100;
+
+            for(int i = 1; i<5; i++)
+            {
+                if (player.CurrentLevel < i) Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write(ConsoleUtility.PadRightForMixedText($"{i}층",6));
+                Console.WriteLine($" 몬스터 출현 확률 : 미니언 {minionSpawnRate[i-1]}%, 고블린 {goblinSpawnRate[i - 1]}%, 드래곤 : {dragonSpawnRate[i - 1]}%   최대 몬스터 수 : {monstersSpawnMax[i-1]}");
+                Console.ResetColor();
+            }
+            string currentLevelStr = player.CurrentLevel == 1 ? "" : $" ~ {player.CurrentLevel}."; 
+            Console.WriteLine($"0. 나가기 1.{currentLevelStr} 던전 선택");
+
+            keyInput = ConsoleUtility.PromptMenuChoice(0, player.CurrentLevel);
+
+            switch (keyInput)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                default:
+                    DungeonMenu(keyInput);
+                    break;
+            }
+        }
+        private void DungeonMenu(int dungeonIdx) // 던전 메뉴
+        {
+            Console.Clear();
+
+            ConsoleUtility.ShowTitle($"■ {dungeonIdx} 층   던 전 ■");
+            Console.WriteLine();
             if (monsters.Count <= 0) // 현재 몬스터 수가 0이하 인가?
             {
-                int monsterCount = new Random().Next(1, 5); // 1 ~ 4 마리의 몬스터 소환
+                currentHp = player.Hp; // 던전 진입시 현재 체력 저장
+                int monsterCount = new Random().Next(1, monstersSpawnMax[dungeonIdx - 1] + 1); // 층 별 몬스터 최대 수 범위 안에서 랜덤
                 for (int i = 0; i < monsterCount; i++)
                 {
-                    MonsterType monsterType = (MonsterType)(new Random().Next(1, 4)); // 몬스터 타입을 미니언, 고블린, 드래곤 사이에서 랜덤하게 선택
+                    int monsterTypeRange = new Random().Next(1, 101);
+                    MonsterType monsterType;
+                    if (monsterTypeRange <= minionSpawnRate[dungeonIdx - 1])
+                    {
+                        monsterType = MonsterType.Minion;
+                    }
+                    else if (monsterTypeRange <= minionSpawnRate[dungeonIdx - 1] + goblinSpawnRate[dungeonIdx - 1])
+                    {
+                        monsterType = MonsterType.Goblin;
+                    }
+                    else monsterType = MonsterType.Dragon;
                     switch (monsterType) // 해당 몬스터 타입에 맞게
                     {
                         case MonsterType.Minion:
@@ -316,9 +433,12 @@ namespace Chapter2_BY2
             foreach (Monster mon in monsters) // 모든 몬스터 리스트 스캔하여 하나씩 표시
             {
                 string isDeadStr = mon.IsDead ? "사망" : "";
+                if (mon.IsDead) Console.ForegroundColor = ConsoleColor.DarkGray;
+
                 Console.Write(ConsoleUtility.PadRightForMixedText($"Lv {mon.Level} {mon.Name} |  HP {mon.Hp} ", 21));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {mon.Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
+                Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
@@ -340,9 +460,12 @@ namespace Chapter2_BY2
             for (int i = 0; i < monsters.Count; i++) // 몬스터 리스트의 수 만큼 표시
             {
                 string isDeadStr = monsters.ToArray()[i].IsDead ? "사망" : ""; // 해당 몬스터가 죽어있는 경우 "사망" 표시. 아닌 경우 공백.
+                if (monsters.ToArray()[i].IsDead) Console.ForegroundColor = ConsoleColor.DarkGray;
+
                 Console.Write(ConsoleUtility.PadRightForMixedText($"{i + 1}- Lv {monsters.ToArray()[i].Level} {monsters.ToArray()[i].Name} |  HP {monsters.ToArray()[i].Hp} ", 24));
                 Console.Write(ConsoleUtility.PadRightForMixedText($"| Atk : {monsters.ToArray()[i].Atk}", 11));
                 Console.WriteLine($"| {isDeadStr}");
+                Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
@@ -352,34 +475,82 @@ namespace Chapter2_BY2
             Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택"); // 해당 문자열 표시
             Console.WriteLine("0. 취소");
 
-            int keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
+            keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count);
             while (true) // 유효하는 값이 입력될 때 까지 계속 반복
             {
                 if (keyInput == 0) // 0번 선택
                 {
-                    DungeonMenu();
+                    //DungeonMenu();
                 }
                 else if (monsters.ToArray()[keyInput - 1].IsDead) // 선택한 몬스터가 죽었는가? (잘못된 선택)
                 {
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
                     keyInput = ConsoleUtility.PromptMenuChoice(0, monsters.Count); // 재입력 후 반복. while이 없는 경우 정상적인 입력으로 판단함.
                 }
-                else BattleMenu(monsters.ToArray()[keyInput - 1]); // 전투 메뉴 진입
+                else
+                {
+                    fieldMonster.Add(monsters.ToArray()[keyInput - 1]);
+                    for (int i = 0; i < monsters.Count; i++)
+                    {
+                        if (i == keyInput - 1) continue;
+                        fieldMonster.Add(monsters.ToArray()[i]);
+                    }
+                    BattleMenu(monsters.ToArray()[keyInput - 1]); // 전투 메뉴 진입
+                }
             }
         }
         private void BattleMenu(ICharacter character) //전투 메뉴
         {
-            ConsoleUtility.ShowTitle("■ Battle!! ■");
+            Random crit = new Random();
+            int critPer = crit.Next(101);
+
+            Random evade = new Random();
+            int evadePer = evade.Next(101);
+
             int currentDamage;
             if (character is Monster) // 입력값이 Monster인 경우 (플레이어 차례)
             {
                 int deadCount = 0; // 죽은 몬스터 수
                 Console.Clear();
 
+                ConsoleUtility.ShowTitle("■ Battle!! ■\n");
+
                 ICharacter opposite = player; // 상대방 : 플레이어
-                currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
-                Console.WriteLine($"{opposite.Name}의 공격!");
-                Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                //currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
+                int sign = new Random().Next(-1, 2); // 부호
+                float percent = new Random().Next(1, 101) * 0.001f; // 0.1퍼센트 ~ 10퍼센트
+                currentDamage = opposite.Atk + bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent)));
+                //Console.WriteLine($"{opposite.Atk+bonusAtk}, {sign}, {percent * 100}, {(opposite.Atk + bonusAtk) * percent}, {(int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent))}");
+                
+                if (evadePer < 10)  // 플레이어가 공격 실패
+                {
+                    currentDamage = 0;
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
+                    Console.ResetColor();
+                }
+
+                else if (critPer < 15) // 플레이어가 크리티컬
+                {
+                    currentDamage = (int)Math.Ceiling(currentDamage * 1.6f);
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write("치명적인 일격!");
+                    Console.ResetColor();
+
+                    Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                }
+
+                else
+                {
+                    Console.WriteLine($"{opposite.Name}의 공격!");
+                    Console.WriteLine($"Lv {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+
+                }
+
                 Console.WriteLine();
                 Console.WriteLine($"Lv {character.Level} {character.Name}");
                 Console.Write($"HP {character.Hp}"); // 피격 전 체력
@@ -398,15 +569,47 @@ namespace Chapter2_BY2
             else // 입력값이 Player인 경우 (몬스터 차례)
             {
 
-                ICharacter[] opposites = monsters.ToArray(); // 상대방 : 몬스터 무리
+                ICharacter[] opposites = fieldMonster.ToArray(); // 상대방 : 몬스터 무리
                 foreach (ICharacter opposite in opposites) // 모든 몬스터 무리가
                 {
                     Console.Clear();
 
+                    ConsoleUtility.ShowTitle("■ Battle!! ■\n");
+
                     if (opposite.IsDead) continue; // 현재 커서의 몬스터가 죽어있는 경우 아래 코드 무시 후 재진입
-                    currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f)); // 가할 데미지 계산
-                    Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
-                    Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    //currentDamage = opposite.Atk + (new Random().Next(-1, 2) * (int)Math.Ceiling(opposite.Atk * 0.1f)); // 가할 데미지 계산
+                    int sign = new Random().Next(-1, 2); // 부호 (-1, 0, 1)
+                    float percent = new Random().Next(1, 101) * 0.001f; // 오차 정밀도를 높이고 싶으면 Next의 최댓값을 올리고 곱하는 0.001f의 자릿수를 늘린다.
+                    currentDamage = opposite.Atk + (sign * (int)Math.Ceiling(opposite.Atk * percent));
+                    //Console.WriteLine($"{opposite.Atk}, {sign}, {percent * 100}, {opposite.Atk * percent}, {(int)Math.Ceiling(opposite.Atk * percent)}");
+                    
+                    if (evadePer < 10)   // 플레이어가 회피
+                    {
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
+
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
+                        Console.ResetColor();
+                    }
+
+                    else if (critPer < 5)  //플레이어가 맞는 크리티컬
+                    {
+                        currentDamage = (int)Math.Ceiling(currentDamage * 1.6f);
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
+
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write("치명적인 일격!");
+                        Console.ResetColor();
+
+                        Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    }
+
+                    else
+                    {
+                        Console.WriteLine($"Lv {opposite.Level} {opposite.Name}의 공격!");
+                        Console.WriteLine($"{character.Name} 을(를) 맞췄습니다. [데미지 : {currentDamage}]");
+                    }
+
                     Console.WriteLine();
                     Console.WriteLine($"Lv {character.Level} {character.Name}");
                     Console.Write($"HP {character.Hp}"); // 피격 전 체력
@@ -417,14 +620,42 @@ namespace Chapter2_BY2
                     ConsoleUtility.PromptMenuChoice(0);
                     if (character.IsDead) deathEvent?.Invoke(character); // 플레이어 죽은 경우 이벤스 실행
                 }
+                fieldMonster.Clear();
                 FightMenu(); // 다시 전투 선택 메뉴으로 이동
             }
         }
 
         private void RewardMenu(ICharacter character) // 보상 메뉴
         {
-            if (character is Player) Console.WriteLine("너희들이 나를 죽였다."); // 패배시
-            else Console.WriteLine("내가 너희들를 죽였다."); // 승리시
+            Console.Clear();
+            if (character is Player) // 패배시
+            {
+                ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
+                ConsoleUtility.PrintTextHighlights("\n", "You Lose\n");
+
+                Console.WriteLine($"Lv {player.Level} {player.Name}");
+                Console.WriteLine($"HP {currentHp} -> {player.Hp}");
+
+                ConsoleUtility.PromptMenuChoice(0);
+
+                player.Hp = 100;
+            }
+            else // 승리시
+            {
+                player.CurrentLevel++;
+                ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
+                ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
+
+                Console.WriteLine($"던전에서 몬스터 {monsters.Count}마리를 잡았습니다.");
+
+                Console.WriteLine($"Lv {player.Level} {player.Name}");
+                Console.WriteLine($"HP {currentHp} -> {player.Hp}");
+
+                ConsoleUtility.PromptMenuChoice(0);
+            }
+            fieldMonster.Clear();
+            monsters.Clear();
+            DungeonEntranceMenu();
         }
     }
 

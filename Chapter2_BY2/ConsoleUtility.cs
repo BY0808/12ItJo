@@ -88,6 +88,16 @@ namespace Chapter2_BY2
             return str.PadRight(str.Length + padding); // 빈공간을 채워줌
         }
 
-        
+        //게임 끝내기시 호출
+        public static void PrintGameEnd()
+        {
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine(" +-+-+-+-+-+-+ +-+-+ +-+-+-+-+ +-+-+-+ ");
+            Console.WriteLine(" |T|H|A|N|K|S| |T|O| |P|L|A|Y| |B|Y|E| ");
+            Console.WriteLine(" +-+-+-+-+-+-+ +-+-+ +-+-+-+-+ +-+-+-+ ");
+            Console.WriteLine("               THE END");
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("      종료를 원하면 0을 눌러주세요");
+        }
     }
 }
