@@ -3,7 +3,7 @@
     /// <summary>
     /// 플레이어 직업
     /// </summary>
-    enum Job
+    enum JobType
     {
         Warrior = 1,
         Paladin,
@@ -21,10 +21,25 @@
         /// 이름 프로퍼티
         /// </summary>
         public string Name { get; }
+        public JobType Job { get; }
         /// <summary>
         /// 직업 프로퍼티
         /// </summary>
-        public string Job { get; }
+        public string JobStr
+        {
+            get
+            { 
+                switch (Job)
+                {
+                    case JobType.Warrior:
+                        return "전사";
+                    case JobType.Paladin:
+                        return "팔라딘";
+                    default:
+                        return "";
+                }
+            }
+        }
         /// <summary>
         /// 레벨 프로퍼티
         /// </summary>
@@ -73,7 +88,7 @@
         /// <param name="hp">체력</param>
         /// <param name="gold">재화</param>
         /// <param name="currentLevel">해금된 최대 레벨</param>
-        public Player(string name, string job, int level, int atk, int def, int hp, int gold, int currentLevel = 1) // 생성자 용도는 기본 셋팅
+        public Player(string name, JobType job, int level, int atk, int def, int hp, int gold, int currentLevel = 1) // 생성자 용도는 기본 셋팅
         {
             Name = name;
             Job = job;

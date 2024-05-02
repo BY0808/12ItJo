@@ -148,19 +148,18 @@ namespace Chapter2_BY2
             }
             else
             {
-                Console.WriteLine("\n캐릭터를 새로 생성합니다.");
                 Console.WriteLine("직업을 선택해주세요.");
 
                 Console.WriteLine("\n1. 전사\n2. 팔라딘\n");
 
-                keyInput = ConsoleUtility.PromptMenuChoice((int)Job.Warrior, (int)Job.Paladin);
+                keyInput = ConsoleUtility.PromptMenuChoice((int)JobType.Warrior, (int)JobType.Paladin);
                 switch (keyInput)
                 {
-                    case (int)Job.Warrior:
-                        player = new Player(playerName, "전사", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+                    case (int)JobType.Warrior:
+                        player = new Player(playerName, JobType.Warrior, 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
                         break;
-                    case (int)Job.Paladin:
-                        player = new Player(playerName, "팔라딘", 1, 6, 15, 150, 2000); // 플레이어 객체 생성 & 초기화
+                    case (int)JobType.Paladin:
+                        player = new Player(playerName, JobType.Paladin, 1, 6, 15, 150, 2000); // 플레이어 객체 생성 & 초기화
                         break;
                 }
             }
@@ -259,7 +258,7 @@ namespace Chapter2_BY2
             Console.WriteLine("");
             //문자열 보간
             //TODO : 능력치 강화분 표현하도록 변경
-            Console.WriteLine($"{player.Name} ( {player.Job} )");
+            Console.WriteLine($"{player.Name} ( {player.JobStr} )");
 
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
@@ -455,7 +454,7 @@ namespace Chapter2_BY2
             }
 
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
-            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.JobStr})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
             string currentLevelStr = player.CurrentLevel == 1 ? "" : $" ~ {player.CurrentLevel}."; 
@@ -528,7 +527,7 @@ namespace Chapter2_BY2
                 Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
-            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.JobStr})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
             Console.WriteLine("\n1. 공격\n");
@@ -557,7 +556,7 @@ namespace Chapter2_BY2
                 Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
-            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.JobStr})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
 
             string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}."; // 몬스터 수에 맞는 선택 영역 문자열 할당
