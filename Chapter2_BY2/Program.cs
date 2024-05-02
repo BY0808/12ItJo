@@ -146,7 +146,7 @@ namespace Chapter2_BY2
                         //저장을 위한 딕셔너리 만들기
                         Dictionary<string, SaveData> playerDataDic = new Dictionary<string, SaveData>();
                         //저장을 위한 객체 생성
-                        SaveData playerData = new SaveData(player, inventory, storeInventory, player.bonusAtk, player.bonusDef, player.bonusHp);
+                        SaveData playerData = new SaveData(player, inventory, storeInventory, (int)player.bonusAtk, player.bonusDef, player.bonusHp);
                         //딕셔너리에 저장을 위한 데이터 넣기
                         playerDataDic[player.Name] = playerData;
                         //데이터 저장 폴더 경로 설정
@@ -512,7 +512,7 @@ namespace Chapter2_BY2
                 //currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
                 int sign = new Random().Next(-1, 2); // 부호
                 float percent = new Random().Next(1, 101) * 0.001f; // 0.1퍼센트 ~ 10퍼센트
-                currentDamage = opposite.Atk + player.bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + player.bonusAtk) * percent)));
+                currentDamage = opposite.Atk + (int)player.bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + (int)player.bonusAtk) * percent)));
                 //Console.WriteLine($"{opposite.Atk+bonusAtk}, {sign}, {percent * 100}, {(opposite.Atk + bonusAtk) * percent}, {(int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent))}");
                 
                 if (evadePer < 10)  // 플레이어가 공격 실패
