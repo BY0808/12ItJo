@@ -1,5 +1,8 @@
 ﻿namespace Chapter2_BY2
 {
+    /// <summary>
+    /// 플레이어 클래스
+    /// </summary>
     internal class Player : ICharacter
     {
         private int hp; // 체력 필드
