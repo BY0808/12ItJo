@@ -1,4 +1,4 @@
-![image](https://github.com/BY0808/12ItJo/assets/166494058/f480ef28-790d-47de-b18c-587925e0b27e)# 내일배움캠프
+# 내일배움캠프
 Chapter2-2 프로그래밍 심화 팀과제
 ## 12있조
 
