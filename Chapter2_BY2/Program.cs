@@ -120,6 +120,22 @@ namespace Chapter2_BY2
         {
             Console.Clear();
             Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
+            //파일 위치 찾기
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json");
+            //저장파일 불러오기
+            Dictionary<string, SaveData> loadedData = SaveData.LoadDataFromJsonFile(filePath);
+
+            //불러온 데이터가 있을 경우 저장된 데이터 이름 출력
+            if (loadedData != null)
+            {
+                Console.WriteLine("저장된 이름을 출력합니다.");
+                Console.WriteLine();
+                foreach (string key in loadedData.Keys)
+                {
+                    Console.WriteLine($"{key}");
+                }
+            }
+            Console.WriteLine();
             Console.WriteLine("원하시는 이름을 설정해주세요 >> ");
             do
             {
@@ -127,24 +143,16 @@ namespace Chapter2_BY2
                 if (playerName == "") Console.WriteLine("다시 입력해주세요."); // 입력된 이름이 공백인 경우, 메시지 출력
             } while (playerName == ""); // 입력된 이름이 공백인 경우 계속 반복
 
-            
-
-            
-
             //이름을 입력 받은 후 파일을 불러와 비교함
-            //파일 위치 찾기
-            filePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "data.json");
-            // 저장파일 불러오기
-            SaveData loadedData = SaveData.LoadDataFromJsonFile(filePath, playerName);
-
-            if (loadedData != null)
+            if (loadedData != null && loadedData.ContainsKey(playerName))
             {
-                player = loadedData.savePlayer;
-                inventory = loadedData.saveInventory;
-                storeInventory = loadedData.saveStoreInventory;
-                bonusAtk = loadedData.saveBonusAtk;
-                bonusDef = loadedData.saveBonusDef;
-                bonusHp = loadedData.saveBonusHp;
+                SaveData setData = loadedData[playerName];
+                player = setData.savePlayer;
+                inventory = setData.saveInventory;
+                storeInventory = setData.saveStoreInventory;
+                bonusAtk = setData.saveBonusAtk;
+                bonusDef = setData.saveBonusDef;
+                bonusHp = setData.saveBonusHp;
             }
             else
             {
