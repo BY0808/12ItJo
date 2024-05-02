@@ -16,6 +16,11 @@ namespace Chapter2_BY2
 
         int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
 
+        int[] minionSpawnRate = { 70, 40, 30, 0 }; // 층 별 몬스터의 소환 확률
+        int[] goblinSpawnRate = { 30, 60, 30, 50 };
+        int[] dragonSpawnRate = { 0, 0, 40, 50 };
+        int[] monstersSpawnMax = { 2, 3, 4, 3 }; // 층 별 몬스터 최대 수
+
         private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
         private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
 
@@ -131,7 +136,7 @@ namespace Chapter2_BY2
                     StoreMenu();
                     break;
                 case 4:
-                    DungeonMenu();
+                    DungeonEntranceMenu();
                     break;
                 case 0:
                     Console.Clear();
@@ -351,19 +356,58 @@ namespace Chapter2_BY2
             }
         }
 
-        private void DungeonMenu() // 던전 메뉴
+        private void DungeonEntranceMenu()
         {
             Console.Clear();
 
-            ConsoleUtility.ShowTitle("■ 던 전 ■");
+            ConsoleUtility.ShowTitle("■ 던 전   입 구■");
+            Console.WriteLine();
+
+            for(int i = 1; i<5; i++)
+            {
+                if (player.CurrentLevel < i) Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write(ConsoleUtility.PadRightForMixedText($"{i}층",6));
+                Console.WriteLine($" 몬스터 출현 확률 : 미니언 {minionSpawnRate[i-1]}%, 고블린 {goblinSpawnRate[i - 1]}%, 드래곤 : {dragonSpawnRate[i - 1]}%   최대 몬스터 수 : {monstersSpawnMax[i-1]}");
+                Console.ResetColor();
+            }
+            string currentLevelStr = player.CurrentLevel == 1 ? "" : $" ~ {player.CurrentLevel}."; 
+            Console.WriteLine($"0. 나가기 1.{currentLevelStr} 던전 선택");
+
+            keyInput = ConsoleUtility.PromptMenuChoice(0, player.CurrentLevel);
+
+            switch (keyInput)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                default:
+                    DungeonMenu(keyInput);
+                    break;
+            }
+        }
+        private void DungeonMenu(int dungeonIdx) // 던전 메뉴
+        {
+            Console.Clear();
+
+            ConsoleUtility.ShowTitle($"■ {dungeonIdx} 층   던 전 ■");
             Console.WriteLine();
             if (monsters.Count <= 0) // 현재 몬스터 수가 0이하 인가?
             {
                 currentHp = player.Hp; // 던전 진입시 현재 체력 저장
-                int monsterCount = new Random().Next(1, 5); // 1 ~ 4 마리의 몬스터 소환
+                int monsterCount = new Random().Next(1, monstersSpawnMax[dungeonIdx - 1] + 1); // 층 별 몬스터 최대 수 범위 안에서 랜덤
                 for (int i = 0; i < monsterCount; i++)
                 {
-                    MonsterType monsterType = (MonsterType)(new Random().Next(1, 4)); // 몬스터 타입을 미니언, 고블린, 드래곤 사이에서 랜덤하게 선택
+                    int monsterTypeRange = new Random().Next(1, 101);
+                    MonsterType monsterType;
+                    if (monsterTypeRange <= minionSpawnRate[dungeonIdx - 1])
+                    {
+                        monsterType = MonsterType.Minion;
+                    }
+                    else if (monsterTypeRange <= minionSpawnRate[dungeonIdx - 1] + goblinSpawnRate[dungeonIdx - 1])
+                    {
+                        monsterType = MonsterType.Goblin;
+                    }
+                    else monsterType = MonsterType.Dragon;
                     switch (monsterType) // 해당 몬스터 타입에 맞게
                     {
                         case MonsterType.Minion:
@@ -431,7 +475,7 @@ namespace Chapter2_BY2
             {
                 if (keyInput == 0) // 0번 선택
                 {
-                    DungeonMenu();
+                    //DungeonMenu();
                 }
                 else if (monsters.ToArray()[keyInput - 1].IsDead) // 선택한 몬스터가 죽었는가? (잘못된 선택)
                 {
@@ -593,6 +637,7 @@ namespace Chapter2_BY2
             }
             else // 승리시
             {
+                player.CurrentLevel++;
                 ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
                 ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
 
@@ -605,7 +650,7 @@ namespace Chapter2_BY2
             }
             fieldMonster.Clear();
             monsters.Clear();
-            MainMenu();
+            DungeonEntranceMenu();
         }
     }
 
