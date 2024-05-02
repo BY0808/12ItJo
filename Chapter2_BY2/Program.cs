@@ -647,7 +647,6 @@ namespace Chapter2_BY2
                 tempGetExp = 0;
                 Console.WriteLine($"Lv {player.Level} {player.Name}");
                 Console.WriteLine($"HP {currentHp} -> {player.Hp}");
-
                 ConsoleUtility.PromptMenuChoice(0);
             }
             fieldMonster.Clear();

@@ -8,8 +8,8 @@
         public string Name { get; } // 이름
         public string Job { get; } // 직업
         public int Level { get; set; } // 레벨
-        public int Atk { get; } // 공격력
-        public int Def {  get; } // 방어력
+        public int  Atk { get; set; } // 공격력
+        public int Def { get; set; } // 방어력
         public int Experience { get; set; } // 경험치
 
         public int Hp // 체력
@@ -61,8 +61,16 @@
                 Level++;
                 Experience -= levelUpExp[currentLevel - 1];
                 Console.WriteLine($"{Name}이(가) 레벨업했습니다! 현재 레벨: {Level}");
+                IncreaseStats();
             }
 
+        }
+        public void IncreaseStats()
+        {
+            // 레벨업 시 공격력과 방어력을 증가시킵니다.
+            Atk = (int)(Atk + 0.5); // 기본 공격력을 0.5 증가
+            Def +=(Def + 1); ; // 방어력을 1 증가
+            Console.WriteLine($"{Name}의 공격력이 0.5, 방어력이 1 증가했습니다!");
         }
 
     }
