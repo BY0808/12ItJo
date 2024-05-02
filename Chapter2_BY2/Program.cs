@@ -21,6 +21,8 @@ namespace Chapter2_BY2
         int[] dragonSpawnRate = { 0, 0, 40, 50 };
         int[] monstersSpawnMax = { 2, 3, 4, 3 }; // 층 별 몬스터 최대 수
 
+        int tempGetExp; // 몬스터 처치시 해당 몬스터의 레벨 만큼 누적
+
         private delegate void GameEvent(ICharacter character); // GameEvent 대리자 (함수를 담을 변수) 
         private event GameEvent deathEvent; // GameEvent 형식의 event 대리자
 
@@ -189,6 +191,8 @@ namespace Chapter2_BY2
             ConsoleUtility.PrintTextHighlights("체  력 : ", (player.Hp + bonusHp).ToString(), bonusHp > 0 ? $" (+{bonusHp})" : "");
 
             ConsoleUtility.PrintTextHighlights(" Gold  : ", player.Gold.ToString());
+            ConsoleUtility.PrintTextHighlights(" Exp to Next Level : ", player.Experience.ToString());
+
             Console.WriteLine();
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
@@ -547,6 +551,9 @@ namespace Chapter2_BY2
                 Console.WriteLine($" -> {character.Hp}"); // 피격 후 체력
                 Console.WriteLine();
                 Console.WriteLine("0. 다음");
+
+                if (character.IsDead) tempGetExp += character.Level;
+
                 ConsoleUtility.PromptMenuChoice(0);
                 foreach (Monster mon in monsters) // 모든 몬스터 무리를 스캔
                 {
@@ -636,7 +643,8 @@ namespace Chapter2_BY2
                 ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
 
                 Console.WriteLine($"던전에서 몬스터 {monsters.Count}마리를 잡았습니다.");
-                player.GainExperience(1);
+                player.GainExperience(tempGetExp);
+                tempGetExp = 0;
                 Console.WriteLine($"Lv {player.Level} {player.Name}");
                 Console.WriteLine($"HP {currentHp} -> {player.Hp}");
 

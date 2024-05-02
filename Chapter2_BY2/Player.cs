@@ -26,6 +26,7 @@
 
         public int CurrentLevel {  get; set; }
 
+        private int[] levelUpExp = { 10, 35, 65, 100 }; // 레벨업에 필요한 경험치 량
         // 생성자 용도는 기본 셋팅
         public Player(string name, string job, int level, int atk, int def, int hp, int gold, int currentLevel = 1, int experience = 0)
         {
@@ -49,16 +50,16 @@
         {
             Experience += experience;
             Console.WriteLine($"{Name}이(가) {experience}의 경험치를 획득했습니다!");
-            CheckLevelUp();
+            CheckLevelUp(Level);
         }
 
-        public void CheckLevelUp()
+        public void CheckLevelUp(int currentLevel)
         {
             // 경험치가 레벨업에 가능한지 확인하고, 레벨을 증가시킵니다.
-            if (Experience >= Level * 100)
+            if (Experience >= levelUpExp[currentLevel - 1])
             {
                 Level++;
-                Experience = 0;
+                Experience -= levelUpExp[currentLevel - 1];
                 Console.WriteLine($"{Name}이(가) 레벨업했습니다! 현재 레벨: {Level}");
             }
 
