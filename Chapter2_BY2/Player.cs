@@ -21,10 +21,9 @@
         }
         public int Gold { get; set; } // 재화
         public bool IsDead => Hp <= 0; // 체력이 0 이하인 경우 true
-        public int CurrentLevel { get; set; }
 
         // 생성자 용도는 기본 셋팅
-        public Player(string name, string job, int level, int atk, int def, int hp, int gold, int currentLevel = 1)
+        public Player(string name, string job, int level, int atk, int def, int hp, int gold)
         {
             Name = name;
             Job = job;
@@ -33,7 +32,6 @@
             Def = def;
             Hp = hp;
             Gold = gold;
-            CurrentLevel = currentLevel;
         }
 
         public void TakeDamage(int damage) // 플레이어가 데미지를 받는 메서드
