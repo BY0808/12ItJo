@@ -126,7 +126,10 @@ namespace Chapter2_BY2
                 playerName = Console.ReadLine(); // 이름 입력 창
                 if (playerName == "") Console.WriteLine("다시 입력해주세요."); // 입력된 이름이 공백인 경우, 메시지 출력
             } while (playerName == ""); // 입력된 이름이 공백인 경우 계속 반복
-            player = new Player(playerName, "Huge", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+
+            
+
+            
 
             //이름을 입력 받은 후 파일을 불러와 비교함
             //파일 위치 찾기
@@ -142,6 +145,24 @@ namespace Chapter2_BY2
                 bonusAtk = loadedData.saveBonusAtk;
                 bonusDef = loadedData.saveBonusDef;
                 bonusHp = loadedData.saveBonusHp;
+            }
+            else
+            {
+                Console.WriteLine("\n캐릭터를 새로 생성합니다.");
+                Console.WriteLine("직업을 선택해주세요.");
+
+                Console.WriteLine("\n1. 전사\n2. 팔라딘\n");
+
+                keyInput = ConsoleUtility.PromptMenuChoice((int)Job.Warrior, (int)Job.Paladin);
+                switch (keyInput)
+                {
+                    case (int)Job.Warrior:
+                        player = new Player(playerName, "전사", 1, 10, 5, 100, 2000); // 플레이어 객체 생성 & 초기화
+                        break;
+                    case (int)Job.Paladin:
+                        player = new Player(playerName, "팔라딘", 1, 6, 15, 150, 2000); // 플레이어 객체 생성 & 초기화
+                        break;
+                }
             }
 
             MainMenu();

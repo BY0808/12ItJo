@@ -1,6 +1,15 @@
 ﻿namespace Chapter2_BY2
 {
     /// <summary>
+    /// 플레이어 직업
+    /// </summary>
+    enum Job
+    {
+        Warrior = 1,
+        Paladin,
+    }
+
+    /// <summary>
     /// 플레이어 클래스
     /// </summary>
     internal class Player : ICharacter
