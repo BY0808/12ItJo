@@ -14,7 +14,7 @@ namespace Chapter2_BY2
 
         List<Monster> monsters = new List<Monster>(); // 몬스터를 저장할 리스트
 
-        int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
+        //int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
 
         int[] minionSpawnRate = { 70, 40, 30, 0 }; // 층 별 몬스터의 소환 확률
         int[] goblinSpawnRate = { 30, 60, 30, 50 };
@@ -89,9 +89,9 @@ namespace Chapter2_BY2
                 player = loadedData.savePlayer;
                 inventory = loadedData.saveInventory;
                 storeInventory = loadedData.saveStoreInventory;
-                bonusAtk = loadedData.saveBonusAtk;
-                bonusDef = loadedData.saveBonusDef;
-                bonusHp = loadedData.saveBonusHp;
+                player.bonusAtk = loadedData.saveBonusAtk;
+                player.bonusDef = loadedData.saveBonusDef;
+                player.bonusHp = loadedData.saveBonusHp;
             }
 
             MainMenu();
@@ -146,7 +146,7 @@ namespace Chapter2_BY2
                         //저장을 위한 딕셔너리 만들기
                         Dictionary<string, SaveData> playerDataDic = new Dictionary<string, SaveData>();
                         //저장을 위한 객체 생성
-                        SaveData playerData = new SaveData(player, inventory, storeInventory, bonusAtk, bonusDef, bonusHp);
+                        SaveData playerData = new SaveData(player, inventory, storeInventory, player.bonusAtk, player.bonusDef, player.bonusHp);
                         //딕셔너리에 저장을 위한 데이터 넣기
                         playerDataDic[player.Name] = playerData;
                         //데이터 저장 폴더 경로 설정
@@ -186,9 +186,9 @@ namespace Chapter2_BY2
             Console.WriteLine($"{player.Name} ( {player.Job} )");
 
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
-            ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + bonusAtk).ToString(), bonusAtk > 0 ? $" (+{bonusAtk})" : "");
-            ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + bonusDef).ToString(), bonusDef > 0 ? $" (+{bonusDef})" : "");
-            ConsoleUtility.PrintTextHighlights("체  력 : ", (player.Hp + bonusHp).ToString(), bonusHp > 0 ? $" (+{bonusHp})" : "");
+            ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.bonusAtk).ToString(), player.bonusAtk > 0 ? $" (+{player.bonusAtk})" : "");
+            ConsoleUtility.PrintTextHighlights("방어력 : ", (player.Def + player.bonusDef).ToString(), player.bonusDef > 0 ? $" (+{player.bonusDef})" : "");
+            ConsoleUtility.PrintTextHighlights("체  력 : ", (player.Hp + player.bonusHp).ToString(), player.bonusHp > 0 ? $" (+{player.bonusHp})" : "");
 
             ConsoleUtility.PrintTextHighlights(" Gold  : ", player.Gold.ToString());
             ConsoleUtility.PrintTextHighlights(" Exp to Next Level : ", player.Experience.ToString());
@@ -258,9 +258,9 @@ namespace Chapter2_BY2
                     //아이템 장착&해제 반복
                     inventory[keyInput - 1].ToggleEquipStatus();
                     //장착된 아이템 수치의 합 구하기
-                    bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
-                    bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
-                    bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
+                    player.bonusAtk = inventory.Select(item => item.isEquipped ? item.Atk : 0).Sum();
+                    player.bonusDef = inventory.Select(item => item.isEquipped ? item.Def : 0).Sum();
+                    player.bonusHp = inventory.Select(item => item.isEquipped ? item.Hp : 0).Sum();
                     EquipMenu();
                     break;
             }
@@ -435,7 +435,7 @@ namespace Chapter2_BY2
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
-            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
+            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + player.bonusAtk}");
 
             Console.WriteLine("\n1. 공격\n");
 
@@ -462,7 +462,7 @@ namespace Chapter2_BY2
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
             Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
-            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
+            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + player.bonusAtk}");
 
             string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}."; // 몬스터 수에 맞는 선택 영역 문자열 할당
             Console.WriteLine($"\n1.{selectMaxStr}  몬스터 선택"); // 해당 문자열 표시
@@ -512,7 +512,7 @@ namespace Chapter2_BY2
                 //currentDamage = opposite.Atk + bonusAtk + (new Random().Next(-1, 2) * (int)Math.Ceiling((opposite.Atk + bonusAtk) * 0.1f)); // 가할 데미지 계산
                 int sign = new Random().Next(-1, 2); // 부호
                 float percent = new Random().Next(1, 101) * 0.001f; // 0.1퍼센트 ~ 10퍼센트
-                currentDamage = opposite.Atk + bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent)));
+                currentDamage = opposite.Atk + player.bonusAtk + (sign * (int)Math.Ceiling(((opposite.Atk + player.bonusAtk) * percent)));
                 //Console.WriteLine($"{opposite.Atk+bonusAtk}, {sign}, {percent * 100}, {(opposite.Atk + bonusAtk) * percent}, {(int)Math.Ceiling(((opposite.Atk + bonusAtk) * percent))}");
                 
                 if (evadePer < 10)  // 플레이어가 공격 실패

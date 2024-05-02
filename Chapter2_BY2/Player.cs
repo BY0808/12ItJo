@@ -8,9 +8,12 @@
         public string Name { get; } // 이름
         public string Job { get; } // 직업
         public int Level { get; set; } // 레벨
-        public int  Atk { get; set; } // 공격력
+        public int Atk { get; set; } // 공격력
         public int Def { get; set; } // 방어력
         public int Experience { get; set; } // 경험치
+
+        public int bonusAtk, bonusDef, bonusHp; // 추가 공격력 / 추가 방어력 / 추가 체력
+
 
         public int Hp // 체력
         {
@@ -24,7 +27,7 @@
         public int Gold { get; set; } // 재화
         public bool IsDead => Hp <= 0; // 체력이 0 이하인 경우 true
 
-        public int CurrentLevel {  get; set; }
+        public int CurrentLevel { get; set; }
 
         private int[] levelUpExp = { 10, 35, 65, 100 }; // 레벨업에 필요한 경험치 량
         // 생성자 용도는 기본 셋팅
@@ -67,11 +70,32 @@
         }
         public void IncreaseStats()
         {
-            // 레벨업 시 공격력과 방어력을 증가시킵니다.
-            Atk = (int)(Atk + 0.5); // 기본 공격력을 0.5 증가
-            Def +=(Def + 1); ; // 방어력을 1 증가
-            Console.WriteLine($"{Name}의 공격력이 0.5, 방어력이 1 증가했습니다!");
-        }
 
+            //// 레벨업 시 공격력과 방어력을 증가시킵니다.
+            //Atk = (int)(Atk + 0.5); // 공격력에 0.5를 더하고 정수형으로 변환
+            //Def += 1;               // 방어력에 1을 더합니다.
+            //Console.WriteLine($"{Name}의 공격력이 0.5, 방어력이 1 증가했습니다!");
+
+
+            // 레벨업 시 공격력과 방어력을 증가시킵니다.
+            double levelUpAtkIncrease = 0.5; // 레벨업 시 공격력 증가량
+            int levelUpDefIncrease = 1;    // 레벨업 시 방어력 증가량
+
+            // 아이템을 장착 중인 경우
+            if (bonusAtk > 0 || bonusDef > 0)
+            {
+                // 공격력과 방어력 증가 (기본 증가량 + 아이템 추가 증가량)
+                Atk += (int)(levelUpAtkIncrease + bonusAtk);
+                Def += levelUpDefIncrease + bonusDef;
+            }
+            else // 아이템을 미장착 중인 경우
+            {
+                // 공격력과 방어력 증가 (기본 증가량만 적용)
+                Atk += (int)levelUpAtkIncrease;
+                Def += levelUpDefIncrease;
+            }
+
+
+        }
     }
 }
