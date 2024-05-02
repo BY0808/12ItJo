@@ -33,6 +33,8 @@ namespace Chapter2_BY2
         public string filePath; //파일위치
         public string playerName; //입력받을 플레이어 이름
 
+        int dungeonIdx;
+
         public GameManager() //클래스와 이름이 같은 함수, 생성자, 클래스 호출시 실행
         {
             InitializeGame();
@@ -364,6 +366,11 @@ namespace Chapter2_BY2
                 Console.WriteLine($" 몬스터 출현 확률 : 미니언 {minionSpawnRate[i-1]}%, 고블린 {goblinSpawnRate[i - 1]}%, 드래곤 : {dragonSpawnRate[i - 1]}%   최대 몬스터 수 : {monstersSpawnMax[i-1]}");
                 Console.ResetColor();
             }
+
+            ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + bonusAtk}");
+
             string currentLevelStr = player.CurrentLevel == 1 ? "" : $" ~ {player.CurrentLevel}."; 
             Console.WriteLine($"0. 나가기 1.{currentLevelStr} 던전 선택");
 
@@ -375,14 +382,15 @@ namespace Chapter2_BY2
                     MainMenu();
                     break;
                 default:
-                    DungeonMenu(keyInput);
+                    dungeonIdx = keyInput;
+                    DungeonMenu();
                     break;
             }
         }
-        private void DungeonMenu(int dungeonIdx) // 던전 메뉴
+        private void DungeonMenu() // 던전 메뉴
         {
             Console.Clear();
-
+            
             ConsoleUtility.ShowTitle($"■ {dungeonIdx} 층   던 전 ■");
             Console.WriteLine();
             if (monsters.Count <= 0) // 현재 몬스터 수가 0이하 인가?
@@ -443,7 +451,7 @@ namespace Chapter2_BY2
         {
             Console.Clear();
 
-            ConsoleUtility.ShowTitle("■ 던 전 ■");
+            ConsoleUtility.ShowTitle("■ 몬 스 터    선 택 ■");
             Console.WriteLine();
 
             for (int i = 0; i < monsters.Count; i++) // 몬스터 리스트의 수 만큼 표시
@@ -469,7 +477,7 @@ namespace Chapter2_BY2
             {
                 if (keyInput == 0) // 0번 선택
                 {
-                    //DungeonMenu();
+                    DungeonMenu();
                 }
                 else if (monsters.ToArray()[keyInput - 1].IsDead) // 선택한 몬스터가 죽었는가? (잘못된 선택)
                 {
