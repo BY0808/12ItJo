@@ -631,12 +631,12 @@ namespace Chapter2_BY2
             }
             else // 승리시
             {
-                player.CurrentLevel++;
+                player.CurrentLevel++; //플레이어 던전 입장 레벨
                 ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
                 ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
 
                 Console.WriteLine($"던전에서 몬스터 {monsters.Count}마리를 잡았습니다.");
-
+                player.GainExperience(1);
                 Console.WriteLine($"Lv {player.Level} {player.Name}");
                 Console.WriteLine($"HP {currentHp} -> {player.Hp}");
 
