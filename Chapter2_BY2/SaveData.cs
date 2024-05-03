@@ -48,30 +48,20 @@ namespace Chapter2_BY2
         }
 
         //키값을 바탕으로 데이터를 파일에서 불러옴
-        public static SaveData LoadDataFromJsonFile(string filePath, string playerName)
+        public static Dictionary<string, SaveData> LoadDataFromJsonFile(string filePath)
         {
             if (File.Exists(filePath)) // 해당 경로에 파일이 있는가?
             {
                 string jsonData = File.ReadAllText(filePath); // 파일 경로에 있는 데이터 불러오기
-                Console.WriteLine("파일을 불러왔습니다.");
+                Console.WriteLine("\n파일을 불러왔습니다.");
                 // 불러온 데이터를 역직렬화
                 Dictionary<string, SaveData> loadedData = JsonConvert.DeserializeObject<Dictionary<string, SaveData>>(jsonData);
-                Console.WriteLine("데이터를 불러왔습니다.");
-
-                //playerName을 키로 사용하여 해당 플레이어의 데이터를 가져옴
-                if (loadedData.ContainsKey(playerName))
-                {
-                    return loadedData[playerName];
-                }
-                else
-                {
-                    Console.WriteLine($"플레이어 '{playerName}'을 생성합니다.");
-                    return null;
-                }
+                Console.WriteLine("데이터를 불러왔습니다.\n");
+                return loadedData;
             }
             else
             {
-                Console.WriteLine("저장된 파일이 없습니다.");
+                Console.WriteLine("\n저장된 파일이 없습니다.");
                 return null;
             }
         }
