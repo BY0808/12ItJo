@@ -3,70 +3,25 @@
 namespace Chapter2_BY2
 {
     //아이템 타입이 어떤것이 있는지 정의
-    /// <summary>
-    /// 아이템 타입
-    /// </summary>
     public enum ItemType
     {
         WEAPON,
         ARMOR
     }
 
-    /// <summary>
-    /// 아이템 클래스
-    /// </summary>
     internal class Item
     {
-        /// <summary>
-        /// 이름
-        /// </summary>
-        public string Name { get; }
-        /// <summary>
-        /// 아이템 설명
-        /// </summary>
-        public string Desc { get; }
-        /// <summary>
-        /// 아이템 타입
-        /// </summary>
+        public string Name { get; } // 이름
+        public string Desc { get; } // 설명
         public ItemType Type { get; } // 아이템 타입
-        /// <summary>
-        /// 아이템 공격력
-        /// </summary>
-        public int Atk { get; }
-        /// <summary>
-        /// 아이템 방어력
-        /// </summary>
-        public int Def { get; }
-        /// <summary>
-        /// 아이템 체력
-        /// </summary>
-        public int Hp { get; }
-        /// <summary>
-        /// 아이템 가격
-        /// </summary>
-        public int Price { get; }
-        /// <summary>
-        /// 장착 여부
-        /// </summary>
-        public bool isEquipped { get; private set; }
-        /// <summary>
-        /// 구매 여부
-        /// </summary>
-        public bool isPurchased { get; private set; }
+        public int Atk { get; } // 공격력
+        public int Def { get; } // 방어력
+        public int Hp { get; } // 체력
+        public int Price { get; } // 가격
+        public bool isEquipped { get; private set; } // 장착 여부
+        public bool isPurchased { get; private set; } // 구매 여부
 
         //isEquipped 와 is Purchased 를 기본적으로 false로 셋팅
-        /// <summary>
-        /// 아이템 생성
-        /// </summary>
-        /// <param name="name">아이템 이름</param>
-        /// <param name="desc">아이템 설명</param>
-        /// <param name="type">아이템 타입</param>
-        /// <param name="atk">아이템 공격력</param>
-        /// <param name="def">아이템 방어력</param>
-        /// <param name="hp">아이템 체력</param>
-        /// <param name="price">아이템 가격</param>
-        /// <param name="isEquipped">장착 여부</param>
-        /// <param name="isPurchased">구매 여부</param>
         public Item(string name, string desc, ItemType type, int atk, int def, int hp, int price, bool isEquipped = false, bool isPurchased = false)
         {
             Name = name;
@@ -83,11 +38,6 @@ namespace Chapter2_BY2
         //아이템 정보 보여줄때 타입이 비슷한것 2가지
         //1.인벤토리에서 그냥 내가 갖고있는 아이템 보여줄 때
         //2. 장착관리에서 내가 어떤 아이템을 낄지 말지 결정할 때
-        /// <summary>
-        /// 인벤토리에서 아이템을 표시하는 메서드
-        /// </summary>
-        /// <param name="withNumber">숫자와 같이 표시할까요?</param>
-        /// <param name="idx">표시할 숫자</param>
         internal void PrintItemStatDescription(bool withNumber = false, int idx = 0) // 인벤토리에서 아이템을 표시하는 메서드
         {
             Console.Write("- ");
@@ -122,11 +72,6 @@ namespace Chapter2_BY2
 
         }
 
-        /// <summary>
-        /// 상점에서 아이템을 표시하는 메서드
-        /// </summary>
-        /// <param name="withNumber">숫자와 같이 표시할까요?</param>
-        /// <param name="idx">표시할 숫자</param>
         public void PrintStoreItemDescription(bool withNumber = false, int idx = 0) // 상점에서 아이템을 표시하는 메서드
         {
             Console.Write("- ");
@@ -162,17 +107,11 @@ namespace Chapter2_BY2
 
         }
 
-        /// <summary>
-        /// 장착, 해제를 반전시키는 메서드
-        /// </summary>
         internal void ToggleEquipStatus() // 장착 여부 반전시키는 메서드
         {
             isEquipped = !isEquipped;
         }
 
-        /// <summary>
-        /// 구매 여부를 확정시키는 메서드
-        /// </summary>
         internal void Purchase() // 구매 여부 확정시키는 메서드
         {
             isPurchased = !isPurchased;

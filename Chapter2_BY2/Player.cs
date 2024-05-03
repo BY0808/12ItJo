@@ -8,13 +8,9 @@
         Warrior = 1,
         Paladin,
     }
-
-    /// <summary>
-    /// 플레이어 클래스
-    /// </summary>
     internal class Player : ICharacter
     {
-        private int hp; // 체력 필드
+        private int hp { get; set; } // 체력 필드
 
         //get 만 있는 프로퍼티 > 생성자 이후 Set 하지 않겠다! > 읽기전용
         /// <summary>
@@ -43,7 +39,7 @@
         /// <summary>
         /// 레벨 프로퍼티
         /// </summary>
-        public int Level { get; }
+        public int Level { get; set; }
         /// <summary>
         /// 공격력 프로퍼티
         /// </summary>
@@ -76,6 +72,13 @@
         /// 현재 해금한 최대 레벨
         /// </summary>
         public int CurrentLevel { get; set; }
+        public int Experience { get; set; }
+
+        public int bonusDef, bonusHp; // 추가 방어력 / 추가 체력
+
+        public float bonusAtk;  // 추가 공격력  
+
+        int[] levelUpExp = { 10, 35, 65, 100 };
 
         /// <summary>
         /// 플레이어 객체 생성
@@ -88,7 +91,7 @@
         /// <param name="hp">체력</param>
         /// <param name="gold">재화</param>
         /// <param name="currentLevel">해금된 최대 레벨</param>
-        public Player(string name, JobType job, int level, int atk, int def, int hp, int gold, int currentLevel = 1) // 생성자 용도는 기본 셋팅
+        public Player(string name, JobType job, int level, int atk, int def, int hp, int gold, int currentLevel = 1, int experience = 0) // 생성자 용도는 기본 셋팅
         {
             Name = name;
             Job = job;
@@ -98,15 +101,37 @@
             Hp = hp;
             Gold = gold;
             CurrentLevel = currentLevel;
+            Experience = experience;
         }
 
-        /// <summary>
-        /// 데미지 피격 메서드
-        /// </summary>
-        /// <param name="damage">피격 데미지</param>
         public void TakeDamage(int damage) // 플레이어가 데미지를 받는 메서드
         {
             Hp -= damage;
+        }
+
+        public void GainExperience(int experience)
+        {
+            Experience += experience;
+            Console.WriteLine($"{Name}이(가) {experience}의 경험치를 획득했습니다!");
+            CheckLevelUp(Level);
+        }
+
+        public void CheckLevelUp(int currentLevel)
+        {
+            // 경험치가 레벨업에 가능한지 확인하고, 레벨을 증가시킵니다.
+            if (Experience >= levelUpExp[currentLevel - 1])
+            {
+                Level++;
+                Experience -= levelUpExp[currentLevel - 1];
+                Console.WriteLine($"{Name}이(가) 레벨업했습니다! 현재 레벨: {Level}");
+
+                // 레벨 업 시에 공격력 0.5 방어력 1씩 증가
+                bonusAtk += 0.5f;
+                bonusDef += 1;
+                Console.WriteLine($"공격력0.5 증가 / 방어력1 증가 ");
+
+                //IncreaseStats();
+            }
         }
     }
 }
