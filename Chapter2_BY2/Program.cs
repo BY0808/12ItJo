@@ -231,7 +231,7 @@ namespace Chapter2_BY2
             Console.WriteLine("");
             //문자열 보간
             //TODO : 능력치 강화분 표현하도록 변경
-            Console.WriteLine($"{player.Name} ( {player.Job} )");
+            Console.WriteLine($"{player.Name} ( {player.JobStr} )");
 
             //보너스 어택이 0보다 크면 보여주고, 아니면 스킵
             ConsoleUtility.PrintTextHighlights("공격력 : ", (player.Atk + player.bonusAtk).ToString(), player.bonusAtk > 0 ? $" (+{player.bonusAtk})" : "");
@@ -482,7 +482,7 @@ namespace Chapter2_BY2
                 Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
-            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.JobStr})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + player.bonusAtk}");
 
             Console.WriteLine("\n1. 공격\n");
@@ -509,7 +509,7 @@ namespace Chapter2_BY2
                 Console.ResetColor();
             }
             ConsoleUtility.PrintTextHighlights("\n", "[내정보]");
-            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.Job})");
+            Console.WriteLine($"Lv. {player.Level}  {player.Name} ({player.JobStr})");
             Console.WriteLine($"HP {player.Hp} / 100  Atk {player.Atk + player.bonusAtk}");
 
             string selectMaxStr = monsters.Count == 1 ? "" : $" ~ {monsters.Count}."; // 몬스터 수에 맞는 선택 영역 문자열 할당
