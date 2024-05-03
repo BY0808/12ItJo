@@ -1,20 +1,8 @@
 ﻿namespace Chapter2_BY2
 {
-    /// <summary>
-    /// 플레이어 직업
-    /// </summary>
-    enum JobType
-    {
-        Warrior = 1,
-        Paladin,
-    }
-
-    /// <summary>
-    /// 플레이어 클래스
-    /// </summary>
     internal class Player : ICharacter
     {
-        private int hp; // 체력 필드
+        private int hp { get; set; } // 체력 필드
 
         //get 만 있는 프로퍼티 > 생성자 이후 Set 하지 않겠다! > 읽기전용
         /// <summary>
@@ -101,10 +89,6 @@
             Experience = experience;
         }
 
-        /// <summary>
-        /// 데미지 피격 메서드
-        /// </summary>
-        /// <param name="damage">피격 데미지</param>
         public void TakeDamage(int damage) // 플레이어가 데미지를 받는 메서드
         {
             Hp -= damage;
