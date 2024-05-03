@@ -637,6 +637,8 @@ namespace Chapter2_BY2
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
                     Console.ResetColor();
+                    currentDamage = 0;
+
                 }
 
                 else if (critPer < 15) // 플레이어가 크리티컬
@@ -700,6 +702,7 @@ namespace Chapter2_BY2
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine($" LV. {character.Level} {character.Name} 을(를) 공격했지만 빗나갔다!");
                         Console.ResetColor();
+                        currentDamage = 0;
                     }
 
                     else if (critPer < 5)  //플레이어가 맞는 크리티컬
