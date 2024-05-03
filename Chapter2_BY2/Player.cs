@@ -1,5 +1,13 @@
 ﻿namespace Chapter2_BY2
 {
+    /// <summary>
+    /// 플레이어 직업
+    /// </summary>
+    enum JobType
+    {
+        Warrior = 1,
+        Paladin,
+    }
     internal class Player : ICharacter
     {
         private int hp { get; set; } // 체력 필드
