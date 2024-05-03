@@ -29,9 +29,6 @@ namespace Chapter2_BY2
         List<Monster> fieldMonster = new List<Monster>();
         /// <summary>
         /// 추가 수치 (Atk 공격력, Def 방어력, Hp 체력)
-        /// </summary>
-        int bonusAtk, bonusDef, bonusHp;
-        /// <summary>
         /// 스테이지별 미니언 생성 확률 { 70, 40, 30, 0 }
         /// </summary>
         int[] minionSpawnRate = { 70, 40, 30, 0 };
@@ -51,7 +48,6 @@ namespace Chapter2_BY2
 
         int keyInput; // 키를 입력받을 변수 
 
-        List<Monster> fieldMonster = new List<Monster>(); // 몬스터의 공격 순서를 제어할 리스트
 
         public string filePath; //파일위치
         public string playerName; //입력받을 플레이어 이름
@@ -123,9 +119,10 @@ namespace Chapter2_BY2
                 player = setData.savePlayer;
                 inventory = setData.saveInventory;
                 storeInventory = setData.saveStoreInventory;
-                bonusAtk = setData.saveBonusAtk;
-                bonusDef = setData.saveBonusDef;
-                bonusHp = setData.saveBonusHp;
+
+                player.bonusAtk = setData.saveBonusAtk;
+                player.bonusDef = setData.saveBonusDef;
+                player.bonusHp = setData.saveBonusHp;
             }
             else
             {

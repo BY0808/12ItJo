@@ -39,7 +39,7 @@
         /// <summary>
         /// 레벨 프로퍼티
         /// </summary>
-        public int Level { get; }
+        public int Level { get; set; }
         /// <summary>
         /// 공격력 프로퍼티
         /// </summary>
@@ -72,6 +72,13 @@
         /// 현재 해금한 최대 레벨
         /// </summary>
         public int CurrentLevel { get; set; }
+        public int Experience { get; set; }
+
+        public int bonusDef, bonusHp; // 추가 방어력 / 추가 체력
+
+        public float bonusAtk;  // 추가 공격력  
+
+        int[] levelUpExp = { 10, 35, 65, 100 };
 
         /// <summary>
         /// 플레이어 객체 생성
@@ -84,7 +91,7 @@
         /// <param name="hp">체력</param>
         /// <param name="gold">재화</param>
         /// <param name="currentLevel">해금된 최대 레벨</param>
-        public Player(string name, JobType job, int level, int atk, int def, int hp, int gold, int currentLevel = 1) // 생성자 용도는 기본 셋팅
+        public Player(string name, JobType job, int level, int atk, int def, int hp, int gold, int currentLevel = 1, int experience = 0) // 생성자 용도는 기본 셋팅
         {
             Name = name;
             Job = job;
