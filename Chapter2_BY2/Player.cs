@@ -17,9 +17,12 @@
         /// 이름 프로퍼티
         /// </summary>
         public string Name { get; }
+        /// <summary>
+        /// 직업 타입 프로퍼티
+        /// </summary>
         public JobType Job { get; }
         /// <summary>
-        /// 직업 프로퍼티
+        /// 직업 문자열 프로퍼티
         /// </summary>
         public string JobStr
         {
@@ -69,15 +72,24 @@
         /// </summary>>
         public bool IsDead => Hp <= 0;
         /// <summary>
-        /// 현재 해금한 최대 레벨
+        /// 현재 해금한 최대 레벨 프로퍼티
         /// </summary>
         public int CurrentLevel { get; set; }
+        /// <summary>
+        /// 플레이어의 현재 경험치 프로퍼티
+        /// </summary>
         public int Experience { get; set; }
-
+        /// <summary>
+        /// 추가 방어력 (Def), 추가 체력 (Hp)
+        /// </summary>
         public int bonusDef, bonusHp; // 추가 방어력 / 추가 체력
-
+        /// <summary>
+        /// 추가 공격력
+        /// </summary>
         public float bonusAtk;  // 추가 공격력  
-
+        /// <summary>
+        /// 레벨업에 필요한 경험치의 양
+        /// </summary>
         int[] levelUpExp = { 10, 35, 65, 100 };
 
         /// <summary>
@@ -104,18 +116,28 @@
             Experience = experience;
         }
 
+        /// <summary>
+        /// 데미지를 받는 메서드
+        /// </summary>
+        /// <param name="damage">받는 데미지</param>
         public void TakeDamage(int damage) // 플레이어가 데미지를 받는 메서드
         {
             Hp -= damage;
         }
-
+        /// <summary>
+        /// 경험치를 획득하는 메서드
+        /// </summary>
+        /// <param name="experience">획득하는 경험치</param>
         public void GainExperience(int experience)
         {
             Experience += experience;
             Console.WriteLine($"{Name}이(가) {experience}의 경험치를 획득했습니다!");
             CheckLevelUp(Level);
         }
-
+        /// <summary>
+        /// 레벨업 조건을 체크하고, 레벨업을 수행하는 메서드
+        /// </summary>
+        /// <param name="currentLevel">플레이어의 현재 레벨</param>
         public void CheckLevelUp(int currentLevel)
         {
             // 경험치가 레벨업에 가능한지 확인하고, 레벨을 증가시킵니다.

@@ -1,6 +1,9 @@
 ﻿namespace Chapter2_BY2
 {
-    internal interface ICharacter // Player, Monster 공통 인터페이스
+    /// <summary>
+    /// Player, Monster 공통 인터페이스
+    /// </summary>
+    internal interface ICharacter
     {
         int Hp { get; set; } // 체력
         int Level { get; } // 레벨
