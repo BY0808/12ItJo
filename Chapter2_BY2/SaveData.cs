@@ -85,8 +85,9 @@ namespace Chapter2_BY2
         /// JSON 데이터를 불러오는 메서드
         /// </summary>
         /// <param name="filePath">파일 이름이 포함된 경로</param>
+        /// <param name="playerName">플레이어 이름</param>
         /// <returns></returns>
-        public static Dictionary<string, SaveData> LoadDataFromJsonFile(string filePath)
+        public static SaveData LoadDataFromJsonFile(string filePath, string playerName)
         {
             if (File.Exists(filePath)) // 해당 경로에 파일이 있는가?
             {
@@ -95,7 +96,17 @@ namespace Chapter2_BY2
                 // 불러온 데이터를 역직렬화
                 Dictionary<string, SaveData> loadedData = JsonConvert.DeserializeObject<Dictionary<string, SaveData>>(jsonData);
                 Console.WriteLine("데이터를 불러왔습니다.\n");
-                return loadedData;
+
+                //playerName을 키로 사용하여 해당 플레이어의 데이터를 가져옴
+                if (loadedData.ContainsKey(playerName))
+                {
+                    return loadedData[playerName];
+                }
+                else
+                {
+                    Console.WriteLine($"플레이어 '{playerName}'을 생성합니다.");
+                    return null;
+                }
             }
             else
             {
