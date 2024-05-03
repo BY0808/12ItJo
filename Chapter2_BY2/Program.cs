@@ -65,6 +65,10 @@ namespace Chapter2_BY2
         /// </summary>
         int currentHp;
         /// <summary>
+        /// 플레이어가 현재 선택한 스테이지의 인덱스
+        /// </summary>
+        int selectedLevel;
+        /// <summary>
         /// 입력받은 정수 값을 가지고 있는 변수
         /// </summary>
         int keyInput;
@@ -478,7 +482,8 @@ namespace Chapter2_BY2
                     MainMenu();
                     break;
                 default:
-                    DungeonMenu(keyInput);
+                    selectedLevel = keyInput;
+                    DungeonMenu(selectedLevel);
                     break;
             }
         }
@@ -750,7 +755,7 @@ namespace Chapter2_BY2
             }
             else // 승리시
             {
-                player.CurrentLevel++; //플레이어 던전 입장 레벨
+                if(selectedLevel == player.CurrentLevel) player.CurrentLevel++; //플레이어 던전 입장 레벨
                 ConsoleUtility.ShowTitle("■ Battle!!  - Result ■");
                 ConsoleUtility.PrintTextHighlights("\n", "Victory\n");
 
