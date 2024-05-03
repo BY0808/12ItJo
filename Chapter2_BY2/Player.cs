@@ -131,7 +131,7 @@
         public void GainExperience(int experience)
         {
             Experience += experience;
-            Console.WriteLine($"{Name}이(가) {experience}의 경험치를 획득했습니다!");
+            Console.WriteLine($"{Name}이(가) {experience}의 경험치를 획득했습니다!\n");
             CheckLevelUp(Level);
         }
         /// <summary>
